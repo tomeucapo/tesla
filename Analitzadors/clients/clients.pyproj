@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{274549b2-21ad-44c3-afd8-3e121a328cc2}</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>
+    </StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>clients</Name>
+    <RootNamespace>clients</RootNamespace>
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Desktop\" />
+    <Folder Include="Desktop\api\" />
+    <Folder Include="Desktop\ui\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Desktop\api\client.py" />
+    <Compile Include="Desktop\api\comm.py" />
+    <Compile Include="Desktop\api\__init__.py" />
+    <Compile Include="Desktop\bench.py" />
+    <Compile Include="Desktop\clientLector.py" />
+    <Compile Include="Desktop\clientThread.py" />
+    <Compile Include="Desktop\configuracio.py" />
+    <Compile Include="Desktop\grafiques.py" />
+    <Compile Include="Desktop\setup.py" />
+    <Compile Include="Desktop\ui\frmConfiguracio.py" />
+    <Compile Include="Desktop\ui\frmConfiguracioSrv.py" />
+    <Compile Include="Desktop\ui\frmPrincipal.py" />
+    <Compile Include="Desktop\ui\recursos_rc.py" />
+    <Compile Include="Desktop\ui\__init__.py" />
+    <Compile Include="Desktop\visor.py" />
+    <Compile Include="Desktop\visorVariable.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Desktop\ui\frmConfiguracio.ui" />
+    <Content Include="Desktop\ui\frmConfiguracioSrv.ui" />
+    <Content Include="Desktop\ui\frmPrincipal.ui" />
+    <Content Include="Desktop\ui\recursos.qrc" />
+    <Content Include="Desktop\visor.ini" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>

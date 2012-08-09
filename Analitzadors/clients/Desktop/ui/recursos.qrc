@@ -1,0 +1,19 @@
+<RCC>
+  <qresource prefix="/icones" >
+    <file>Icones/aturarCaptura.png</file>
+    <file>Icones/iniciarCaptura.png</file>
+    <file>Icones/about.png</file>
+    <file>Icones/afegir.png</file>
+    <file>Icones/baixar.png</file>
+    <file>Icones/buidar.png</file>
+    <file>Icones/cancel.png</file>
+    <file>Icones/connectar.png</file>
+    <file>Icones/desconnectar.png</file>
+    <file>Icones/guardar.png</file>
+    <file>Icones/llibreta.png</file>
+    <file>Icones/ok.png</file>
+    <file>Icones/preferencies.png</file>
+    <file>Icones/rellotge.png</file>
+    <file>Icones/sortir.png</file>
+  </qresource>
+</RCC>

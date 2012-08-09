@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "servidor", "servidor\servidor.pyproj", "{482A6BBE-6F30-4B76-B5BA-9F58A463C9AB}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "clients", "clients\clients.pyproj", "{274549B2-21AD-44C3-AFD8-3E121A328CC2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{20E19E72-73D2-4955-9740-EC2E6651E522}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs23
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = clients\\clients.pyproj
+		SccProjectName1 = clients
+		SccLocalPath1 = clients
+		SccProjectUniqueName2 = servidor\\servidor.pyproj
+		SccProjectName2 = servidor
+		SccLocalPath2 = servidor
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{482A6BBE-6F30-4B76-B5BA-9F58A463C9AB}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{482A6BBE-6F30-4B76-B5BA-9F58A463C9AB}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{482A6BBE-6F30-4B76-B5BA-9F58A463C9AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{274549B2-21AD-44C3-AFD8-3E121A328CC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{274549B2-21AD-44C3-AFD8-3E121A328CC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

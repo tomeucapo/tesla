@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{482a6bbe-6f30-4b76-b5ba-9f58a463c9ab}</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>lector.py</StartupFile>
+    <SearchPath>C:\Users\tomeu\develop\projectes\analitzadors\servidor</SearchPath>
+    <WorkingDirectory>C:\Users\tomeu\develop\projectes\analitzadors\servidor</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>servidor</Name>
+    <RootNamespace>servidor</RootNamespace>
+    <IsWindowsApplication>False</IsWindowsApplication>
+    <InterpreterId>2af0f10d-7135-4994-9156-5d01c9c11b7e</InterpreterId>
+    <InterpreterVersion>2.6</InterpreterVersion>
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="configurador.py" />
+    <Compile Include="dataExport.py" />
+    <Compile Include="drivers\crcTable.py" />
+    <Compile Include="drivers\cvmComm.py" />
+    <Compile Include="drivers\cvmData.py" />
+    <Compile Include="drivers\modBusComm.py" />
+    <Compile Include="drivers\params\cvmCmds.py" />
+    <Compile Include="drivers\params\pmRegs.py" />
+    <Compile Include="drivers\params\__init__.py" />
+    <Compile Include="drivers\pmData.py" />
+    <Compile Include="drivers\__init__.py" />
+    <Compile Include="export\clientRest.py" />
+    <Compile Include="export\localFile.py" />
+    <Compile Include="export\__init__.py" />
+    <Compile Include="lector.py" />
+    <Compile Include="lectorGen.py" />
+    <Compile Include="lectorSrv.py" />
+    <Compile Include="lectorSvc.py" />
+    <Compile Include="server.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="drivers\" />
+    <Folder Include="drivers\params\" />
+    <Folder Include="export\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>

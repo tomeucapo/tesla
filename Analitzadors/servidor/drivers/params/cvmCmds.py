@@ -1,0 +1,141 @@
+# -*- coding: utf-8 -*-
+
+cmdsCVMk = {
+            "TPF": {"registre"  : "RVI",
+                    "numRegs"   : 4,
+                    "descripcio": u"Tensió simple instantanea",  
+                    "valEscala" : 1,
+                    "numDigits" : 9 },
+
+            "RVM": {"registre"  : "RVM",
+                    "numRegs"   : 3,
+                    "descripcio": u"Tensió simple maxima",   
+                    "valEscala" : 1, 
+                    "numDigits" : 9 },
+
+            "RVm": {"registre"  : "RVm", 
+                    "numRegs"   : 3, 
+                    "descripcio": u"Tensió simple minima",   
+                    "valEscala" : 1, 
+                    "numDigits" : 9 },
+
+            "ROI": {"registre"  : "ROI",
+                    "numRegs"   : 4,
+                    "descripcio": u"Tensió composta instantanea", 
+                    "valEscala" : 1, 
+                    "numDigits" : 9 },
+
+            "ROM": {"registre"  : "ROM", 
+                    "numRegs"   : 4, 
+                    "descripcio": u"Tensió composta maxima",  
+                    "valEscala" : 1, 
+                    "numDigits" : 9 }, 
+
+            "IPF": {"registre"  : "RAI", 
+                    "numRegs"   : 4, 
+                    "descripcio": u"Intensitat instantanea",  
+                    "valEscala" : 0.001, 
+                    "numDigits" : 9 }, 
+
+            "RAM": {"registre"  : "RAM",
+                    "numRegs"   : 3,  
+                    "descripcio": u"Intensitat maxima",  
+                    "valEscala" : 0.001,
+                    "numDigits" : 9 },
+            
+            "RAm": {"registre"  : "RAm",
+                    "numRegs"   : 3,  
+                    "descripcio": u"Intensitat minima",  
+                    "valEscala" : 0.001,
+                    "numDigits" : 9 },
+            
+            "PAT": {"registre"  : "RPI",
+                    "numRegs"   : 4,  
+                    "descripcio": u"Potencia activa instantanea",  
+                    "valEscala" : 1,
+                    "numDigits" : 9 },
+
+            "RPM": {"registre"  : "RPM",
+                    "numRegs"   : 4,  
+                    "descripcio": u"Potencia activa maxima",  
+                    "valEscala" : 1,
+                    "numDigits" : 9 },
+
+            "RPm": {"registre"  : "RPm",
+                    "numRegs"   : 4,  
+                    "descripcio": u"Potencia activa minima",  
+                    "valEscala" : 1,
+                    "numDigits" : 9 },
+
+            "RLI": {"registre"  : "RLI",
+                    "numRegs"   : 4,  
+                    "descripcio": u"Potencia inductiva instantanea",  
+                    "valEscala" : 1,
+                    "numDigits" : 9 },
+            
+            "RLM": {"registre"  : "RLM",
+                    "numRegs"   : 4,  
+                    "descripcio": u"Potencia inductiva maxima",  
+                    "valEscala" : 1,
+                    "numDigits" : 9 },
+
+            "RLm": {"registre"  : "RLm",
+                    "numRegs"   : 4,  
+                    "descripcio": u"Potencia inductiva minima",  
+                    "valEscala" : 1,
+                    "numDigits" : 9 },
+
+            "RCI": {"registre"  : "RCI",
+                    "numRegs"   : 4,  
+                    "descripcio": u"Potencia capacitiva instantanea",  
+                    "valEscala" : 1,
+                    "numDigits" : 9 },
+                    
+            "RCM": {"registre"  : "RCM",
+                    "numRegs"   : 3,  
+                    "descripcio": u"Potencia capacitiva maxima",  
+                    "valEscala" : 1,
+                    "numDigits" : 9 },
+
+            "RCm": {"registre"  : "RCm",
+                    "numRegs"   : 3,  
+                    "descripcio": u"Potencia capacitiva minima",  
+                    "valEscala" : 1,
+                    "numDigits" : 9 },
+                    
+            "RFI": {"registre"  : "RFI",
+                    "numRegs"   : 4,  
+                    "descripcio": u"Factor potencia instantánea",  
+                    "valEscala" : 0.01,
+                    "numDigits" : 3 },
+
+            "RFM": {"registre"  : "RFM",
+                    "numRegs"   : 3,  
+                    "descripcio": u"Factor potencia maxim",  
+                    "valEscala" : 0.01,
+                    "numDigits" : 3 },
+            
+            "RFm": {"registre"  : "RFm",
+                    "numRegs"   : 3,  
+                    "descripcio": u"Factor potencia minima",  
+                    "valEscala" : 0.01,
+                    "numDigits" : 3 },   
+
+            "FRE": {"registre"  : "RHI",
+                    "numRegs"   : 1,  
+                    "descripcio": u"Frequencia instantanea",  
+                    "valEscala" : 0.1,
+                    "numDigits" : 3 },
+
+            "RHM": {"registre"  : "RHM",
+                    "numRegs"   : 1,  
+                    "descripcio": u"Frequencia maxima",  
+                    "valEscala" : 0.1,
+                    "numDigits" : 3 },
+            
+            "RHm": {"registre"  : "RHm",
+                    "numRegs"   : 1,  
+                    "descripcio": u"Frequencia minima",  
+                    "valEscala" : 0.1,
+                    "numDigits" : 3 }
+}     
