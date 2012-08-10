@@ -5,6 +5,7 @@ class localFile:
       def __init__(self, target, equip):
           self.idPM = equip.idStr
           self.mitjaDades = {}
+          self.available = true
           self.dirFitxer = target
           self.lastValues = {}
           self.logger = logging.getLogger('lector.dataexport')

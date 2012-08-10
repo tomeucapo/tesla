@@ -4,7 +4,8 @@ import urllib2, urllib, json
 class clientRest:
       def __init__(self, target, equip):         
           self.equip = equip
-          self.URLDest = target         
+          self.URLDest = target     
+          self.available = false
           self.mitjaDades = {}
           self.logger = logging.getLogger('lector.dataexport')
                     
@@ -18,6 +19,8 @@ class clientRest:
           
           self.logger.debug("Enviant lectura a: %s" % urlReq)
           
+          self.available = false
+
           try:
              req = urllib2.Request(url=urlReq, data=dataWS)
              f = urllib2.urlopen(req)
@@ -28,4 +31,6 @@ class clientRest:
           except IOError, e:
              self.logger.error(str(e))
              raise IOError, "Error de connexio: %s" % str(e)
+
+          self.available = true
 

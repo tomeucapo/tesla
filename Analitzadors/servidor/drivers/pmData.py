@@ -9,7 +9,7 @@
 # Tomeu Capó
 #
 
-import pickle, threading, md5, os, time
+import pickle, threading, hashlib, os, time
 
 from modBusComm import READ_WORDS, REPOR_SLAVE, E_SND_ERROR, E_NOT_OPEN_COMM
 from params import pmRegs
@@ -36,7 +36,8 @@ class pmData:
         self.lastStatus = {}
         self.lectura = {}
         self.model = model
-        self.fileNameCache = md5.new("%d:%s" % (self.id, self.model)).hexdigest()
+
+        self.fileNameCache = hashlib.md5("%d:%s" % (self.id, self.model)).hexdigest()
         
         self.statusQuerys = ["HMU", "ERR", "VSO", "NSN"]
         
@@ -106,7 +107,7 @@ class pmData:
         if rebut:
            self.status()
            self.lastRead = time.strftime("%d/%m/%Y %H:%M:%S")
-
+       
         return rebut  
 
     def clearCache(self):
