@@ -45,7 +45,7 @@ if __name__ == '__main__':
    level = LEVELS.get(logLevel, logging.NOTSET)
    my_logger.setLevel(level)
 
-   my_logger.info("Instanciant servidor de central de mesures ...")
+   my_logger.info("*** Instanciant servidor de central de mesures ...")
 
    try:
        srvLec = srvLector()

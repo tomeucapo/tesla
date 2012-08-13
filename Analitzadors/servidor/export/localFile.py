@@ -5,7 +5,7 @@ class localFile:
       def __init__(self, target, equip):
           self.idPM = equip.idStr
           self.mitjaDades = {}
-          self.available = true
+          self.available = True
           self.dirFitxer = target
           self.lastValues = {}
           self.logger = logging.getLogger('lector.dataexport')
@@ -35,7 +35,7 @@ class localFile:
           fitxerLog = os.path.join(self.dirFitxer, "%s.txt" % time.strftime("%Y%m%d", timeS))
           fitxerEstat = os.path.join(self.dirFitxer,"analitzador.dat")
 
-          self.logger.info("Gravant lectura a fitxer: %s" % fitxerLog)           
+          self.logger.info("Storing sample to file: %s" % fitxerLog)           
 
           if not lectura:
              lectura = self.mitjaDades

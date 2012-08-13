@@ -40,6 +40,7 @@
     <Compile Include="drivers\pmData.py" />
     <Compile Include="drivers\__init__.py" />
     <Compile Include="export\clientRest.py" />
+    <Compile Include="export\exceptions.py" />
     <Compile Include="export\localFile.py" />
     <Compile Include="export\__init__.py" />
     <Compile Include="lector.py" />

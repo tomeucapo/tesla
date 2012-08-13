@@ -1,4 +1,5 @@
 
+
 import time, threading, socket, Queue, re
 import logging, logging.config
 
@@ -18,7 +19,7 @@ class server(threading.Thread):
           self.__queue = qRequest
           self.__queueResponse = qResponse
 
-          threading.Thread.__init__(self)
+          threading.Thread.__init__(self, name=self.__class__.__name__)
           try:
              self.socketSrv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
              self.socketSrv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -165,7 +166,7 @@ class server(threading.Thread):
               sock.close()
  
       def run(self):
-          self.logger.debug("Starting TCP Server ...")
+          self.logger.info("Starting TCP Server ...")
           try:
              self.socketSrv.bind((HOST, PORT))
              self.socketSrv.listen(100)

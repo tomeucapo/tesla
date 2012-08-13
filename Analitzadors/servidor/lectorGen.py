@@ -21,7 +21,7 @@ class lector(threading.Thread):
         self.tempsLectura = 60
 
         self.initFraccions() 
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, name=self.__class__.__name__)
 
     def initFraccions(self):
         lMinuts = [(sec * self.tempsGravacio) % 60 for sec in range(60 / self.tempsGravacio)]
