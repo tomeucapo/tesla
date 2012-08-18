@@ -16,9 +16,10 @@ class lector(threading.Thread):
         self.errorComm = False
         self.ready = False
         self.pause = False
+        self.acabar = False
 
         self.tempsGravacio = 15
-        self.tempsLectura = 60
+        self.tempsLectura = 60        
 
         self.initFraccions() 
         threading.Thread.__init__(self, name=self.__class__.__name__)
@@ -26,7 +27,7 @@ class lector(threading.Thread):
     def initFraccions(self):
         lMinuts = [(sec * self.tempsGravacio) % 60 for sec in range(60 / self.tempsGravacio)]
         self.lHores = ["%(h)02d:%(m)02d" % {"h":i, "m": j} for i in range(24) for j in lMinuts]
-       
+    
     def setMaxLectures(self, maxLect, tempLectura):
         self.tempsGravacio = maxLect
         self.tempsLectura = tempLectura 
@@ -71,7 +72,7 @@ class lector(threading.Thread):
         self.ready = self.forceReq = True
 
         k = 0
-        while True:
+        while not self.acabar:
             if self.pause:
                self.logger.info("Possat en pausa el lector per %s" % self.idEquip)
                while self.pause:
@@ -85,7 +86,7 @@ class lector(threading.Thread):
 
             if horaActual in self.lHores:
                 if ((horaActual != horaGravacio) and lectures > 0):
-                    #self.logger.info("%(hora)s Gravant %(nLect)d lectures " % {"hora": horaActual, "nLect": lectures})
+                    self.logger.info("Enviant les dades al dataExport ...")
                     qOut.put(self.equip.darreraLectura)
                     self.equip.resetValues()
                  
@@ -94,12 +95,11 @@ class lector(threading.Thread):
 
             # Lectura del analitzador
 
-            if ((diffT > self.tempsLectura) or self.forceReq):
-                
+            if ((diffT > self.tempsLectura) or self.forceReq):                
                 self.logger.info("%(hora)s Lectura numero %(nLect)d" % {"hora": time.strftime("%H:%M"), "nLect": lectures})
 
-                request = self.equip.query()
-                if request:
+                response = self.equip.query()
+                if response:
                    tempsInicial = time.time()
                    lectures += 1    
                    k = 0
@@ -108,7 +108,11 @@ class lector(threading.Thread):
                    tempsInicial = int(time.time()) + int(math.exp(k))
                    k = (k + 1) % 10
 
-                self.errorComm = not request
+                self.errorComm = not response
                 self.forceReq = False
 
             time.sleep(0.5)
+
+        self.dataExp.aturar = True
+        self.dataExp.join()
+        self.logger.info("Lector per l'analitzador %s aturat!" % self.idEquip)

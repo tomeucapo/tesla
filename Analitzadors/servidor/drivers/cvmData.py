@@ -20,8 +20,9 @@ class cvmData:
           self.model = model
           self.regsQuery = cvmCmds.cmdsCVMk 
           self.lastError = ""
+          self.lastStatus = {}
           self.lectura = {}
-          self.buidaLectura()
+          self.resetValues()
       
       def setVariables(self, vars):
           self.variables = vars
@@ -29,7 +30,7 @@ class cvmData:
       def getDefs(self):
           return pickle.dumps(self.regsQuery)
 
-      def buidaLectura(self):
+      def resetValues(self):
           self.darreraLectura = {}
           for cmd in self.variables:
               self.darreraLectura[cmd] = []
@@ -46,11 +47,12 @@ class cvmData:
 
           return chunks
  
-      def consulta(self):
+      def query(self):
           rebut = False
           for var in self.variables:
+              params = self.regsQuery[var]
               self.mutex.acquire()
-              if not self.cvmComm.enviar(var, 0):
+              if not self.cvmComm.enviar(params["registre"], 0):
                  self.mutex.release()
                  continue
               rebut = self.cvmComm.rebre()
@@ -61,13 +63,13 @@ class cvmData:
                  self.lastError = self.cvmComm.msgError()
                  break
 
-              dades = [ float(chunk)*float(self.regsQuery[var]["valEscala"]) if chunk else 0.0 for chunk in self.__chunks__(var) ]
+              dades = [ float(chunk)*float(params["valEscala"]) if chunk else 0.0 for chunk in self.__chunks__(var) ]
               self.darreraLectura[var].append(dades)
               self.lectura[var] = dades
 
           return(rebut)  
 
-      def identifica(self):
+      def identify(self):
           retval='CVMk'
 
           self.mutex.acquire() 
@@ -77,13 +79,16 @@ class cvmData:
           rebut = self.cvmComm.rebre()
           self.mutex.release()
  
-   	  if rebut:
-	     retval = self.model+" Ver. "+self.cvmComm.lastResponse
-	  else:
-	     self.logger.error(self.cvmComm.msgError())
-	     self.lastError = self.cvmComm.msgError() 
-          
+          if rebut:
+             retval = self.model+" Ver. "+self.cvmComm.lastResponse
+          else:
+             self.lastError = self.cvmComm.msgError() 
+             self.logger.error(self.lastError)
+                       
           return(retval)
+
+      def status(self):
+          pass
 
       def __str__(self):
           return pickle.dumps(self.lectura)

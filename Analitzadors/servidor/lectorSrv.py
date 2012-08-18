@@ -180,6 +180,7 @@ class srvLector:
 
     def shutdown(self, idLector=None):
         self.acabar = True
+        self.srv.aturaTot = True
         return("DONE")
 
     def getDefs(self, idLector):
@@ -277,7 +278,7 @@ class srvLector:
     
     def dispatchMessages(self, idWorker):
         self.my_logger.info("Worker %d: Starting..." % idWorker)
-        while True:
+        while not self.acabar:
             try:               
                 self.my_logger.debug("Worker %d: Waiting for new task ..." % idWorker)
                 task = self.qRequest.get(block=True)                

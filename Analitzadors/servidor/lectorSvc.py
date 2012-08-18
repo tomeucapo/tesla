@@ -8,8 +8,6 @@ import servicemanager
 
 from lectorSrv import *
 
-LOG_FILENAME = 'log\\lector.log'
-
 LEVELS = {'debug':    logging.DEBUG,
           'info':     logging.INFO,
           'warning':  logging.WARNING,
@@ -47,6 +45,7 @@ class lectorService(win32serviceutil.ServiceFramework):
    def SvcStop(self):
        self.ReportServiceStatus(win32service.SERVICE_STOP_PENDING)
        win32event.SetEvent(self.hWaitStop)
+       self.srvLec.shutdown()
        self.ReportServiceStatus(win32service.SERVICE_STOPPED)
          
    def SvcDoRun(self):
@@ -62,16 +61,17 @@ class lectorService(win32serviceutil.ServiceFramework):
        my_logger = logging.getLogger('lector.main')
 
        try:
-          srvLec = srvLector()
+          self.srvLec = srvLector()
        except Exception, err:
           servicemanager.LogErrorMsg(str(err))
-          return       
+          return     
+        
        servicemanager.LogInfoMsg("*** Iniciat el servidor de lectures i esperant ...")
 
        my_logger.info(self.arguments)
        
        if self.autoStart.upper() == "YES":
-          srvLec.startAll()
+          self.srvLec.startAll()
 
        win32event.WaitForSingleObject(self.hWaitStop, win32event.INFINITE)
 

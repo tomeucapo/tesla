@@ -136,8 +136,8 @@ class pmData:
 
     def getConfig(self):
         self.logger.debug("Demanant configuracio i estat ... %d" % self.id)
-        
-        if os.path.exists(self.fileNameCache):
+
+        if os.path.exists(self.fileNameCache) and time.time() < os.path.getmtime(self.fileNameCache)+85000:
            self.logger.debug("\tLlegint configuracio de la cache ... %s" % self.fileNameCache) 
            fConfDrv = open(self.fileNameCache,"rb")
            (self.idStr, self.rangs, self.lastStatus) = pickle.load(fConfDrv)

@@ -1,3 +1,10 @@
+##########################################################################################
+#
+# @file   clientRest.py
+#         Plugin per gravar les dades de cap al webservice REST.
+#
+# @author Tomeu Capo
+#
 
 from exceptions import * 
 import time, logging
@@ -8,7 +15,6 @@ class clientRest:
           self.equip = equip
           self.URLDest = target     
           self.available = False
-          self.mitjaDades = {}
           self.logger = logging.getLogger('lector.dataexport')
                     
       def save(self, timeS, dades):
@@ -29,8 +35,11 @@ class clientRest:
              self.lastResponse = f.read()
           except urllib2.HTTPError, e:
              dataR = e.read().split('#')
-             strError = dataR[1] if len(dataR) > 0 else str(e)
-             raise ClientError, "Error enviant lectura: %s" % str(strError)
+             strError = str(dataR[1]) if len(dataR) > 0 else str(e)
+             if e.code == 409:
+                raise ClientDuplicateEntry, "Registre ja existent: %s" % strError
+             else:
+                raise ClientError, "Error enviant lectura: %s" % strError
           except urllib2.URLError, e:
              raise ClientError, e.reason
                     

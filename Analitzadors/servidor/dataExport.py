@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
 ##########################################################################################
 # @file dataExport.py
+#
 # Data exporter module. This module manages different submodules export of data 
 # that can be charged based on the general configuration file config.xml.
 #
-# @author Tomeu Capó
+# @author Tomeu Capo
 #
 
 import time, threading, logging, logging.config, Queue
@@ -31,8 +31,9 @@ class dataExport(threading.Thread):
           self.idEquip = equip.id
           self.lExport = {}
           self.pendingSamples = []
+          self.aturar = False
 
-          self.logger.info("Starting data exporters ...")
+          self.logger.info("Loading data exporters ...")
           
           for modName,target in dExports.iteritems():
               self.logger.info("%s: a %s" % (modName, target))
@@ -63,56 +64,63 @@ class dataExport(threading.Thread):
 
       def moveToBulk(self):
           self.logger.info("Move %d samples to bulk store ..." % self.queuePending.qsize())
-          while not self.queuePending.empty():
+          while self.queuePending.qsize() > int(self.queuePending.maxsize/2):
                 (timeS, expP, data) = self.queuePending.get()
-                self.pendingSamples.append((time.mktime(timeS), expP.__class__.__name__, pickle.dumps(data)))
+                self.pendingSamples.append((time.mktime(timeS), expP.__class__.__name__, pickle.dumps(data, pickle.HIGHEST_PROTOCOL)))
                 self.queuePending.task_done()
-
-      def moveToQueue(self, pModuleName):
-          self.logger.info("Move samples of %s module, from bulk to queue ..." % pModuleName)
-
-          for sample in self.pendingSamples:
-              (timeS, moduleName, data) = sample
-              if moduleName == pModuleName:
-                 self.queuePending.put((timeS, self.lExport.get(module), data))
-                 self.pendingSamples.remove(sample)
 
       def storeBulk(self):
           if len(self.pendingSamples) == 0:
              return
 
           self.logger.info("Storing %d sample(s) to disk ..." % len(self.pendingSamples))
-          persistDb = lite.connect(DB_BULK)
-
           try:
-              cur = persistDb.cursor()
+              cur = self.persistDb.cursor()
               cur.executemany("INSERT INTO SAMPLES VALUES(?, ?, ?)", self.pendingSamples)
-              persistDb.commit()
+              self.persistDb.commit()
           except lite.DataError, e:
               self.logger.error("Persistence store error: %s" % str(e))
           else:
               self.pendingSamples = []
 
-
-          persistDb.close()
-
-      def loadBulk(self):
-          self.logger.info("Loading bulk from disk ...")
-          persistDb = lite.connect(DB_BULK)
-
+      def deleteFromBulk(self, module, timeS):
+          #self.logger.debug("Deleting record: %s ..." % time.strftime("%d/%m/%Y %H:%M:%S", time.localtime(time.mktime(timeS)) ) )
           try:
-              cur = persistDb.cursor()
-              cur.execute("select time, module, data from samples")
-              for row in cur:
-                  self.pendingSamples.append(row)                                        
-          except lite.DatabaseError, e:
-              self.logger.error("Persistence store error: %s" % str(e))
+              cur = self.persistDb.cursor()              
+              query = "delete from samples where module='%s' and time=%d" % (module, time.mktime(timeS))
+              cur.execute(query)
+              
+              self.logger.debug(query)
+              self.persistDb.commit()
+          except Exception, e:
+              self.logger.error("Persistence delete error: %s" % str(e))
 
-          persistDb.close()
+      def loadBulk(self):          
+          try:
+              cur = self.persistDb.cursor()
+              cur.execute("select time, module, data from samples")
+              
+              for (timeS, moduleName, data) in cur:
+                  module = self.lExport.get(str(moduleName))
+                  pendTask = (time.localtime(timeS), module,  pickle.loads(str(data)))
+                  self.queuePending.put(pendTask)           
+                                                                 
+              cur.close()
+          except Exception, e:
+              self.logger.error("Persistence load error: %s" % str(e))
 
       def sendPending(self):
-          self.logger.info("Starting pending processor sender ...")          
-          while True:
+          self.logger.info("Starting pending processor sender ...")    
+
+          try:
+                self.persistDb = lite.connect(DB_BULK)
+          except lite.DatabaseError, e:
+                self.logger.fatal(str(e))
+                return
+
+          self.loadBulk()                                                                                                        
+
+          while not self.aturar:
                 time.sleep(60)
                 if self.queuePending.empty():
                    continue
@@ -131,16 +139,27 @@ class dataExport(threading.Thread):
     
                       self.logger.info("Storing sample pending to send: %s ..." % time.strftime("%d/%m/%Y %H:%M:%S", timeS))
                       try:
-                         expP.save(timeS, mitjaDades)                                                  
+                         expP.save(timeS, mitjaDades)                         
+                      except ClientDuplicateEntry, e:
+                         self.logger.warn(str(e))
                       except Exception, e:
-                         self.logger.error("Pluggin %s error: %s" % (expP.__class__.__name__, str(e))
+                         self.logger.error("Pluggin %s error: %s" % (expP.__class__.__name__, str(e)))
                          self.queuePending.put((timeS, expP, mitjaDades))
                          break
-                
+                      
+                      self.deleteFromBulk(expP.__class__.__name__, timeS)
                       self.queuePending.task_done()
-                
+
+          self.logger.info("Stopped pending processor sender ...")         
+
+      #
+      # Process principal que grava les lectures de cap als plugins
+      #       
+         
       def run(self):
-          while True:
+          self.logger.info("Entering dataExport main loop ...")         
+          
+          while not self.aturar:
                 mitjaDades = self.dataAverage(self.queueOut.get(block=True))
                 self.logger.info("Storing sample data ...")
 
@@ -148,6 +167,8 @@ class dataExport(threading.Thread):
                     timeS = time.localtime()
                     try:
                         expP.save(timeS, mitjaDades)
+                    except ClientDuplicateEntry, e:
+                        self.logger.warn(str(e))
                     except ClientError, e:
                         self.logger.error("Pluggin %s error: %s" % (expP.__class__.__name__, str(e)))
                         self.queuePending.put((timeS, expP, mitjaDades))
@@ -155,3 +176,8 @@ class dataExport(threading.Thread):
                         self.logger.fatal("Pluggin %s unexpected error: %s" % (expP.__class__.__name__, str(e)))
                                             
                 self.queueOut.task_done()
+   
+          self.dataExp.moveToBulk()
+          self.dataExp.storeBulk()
+
+          self.logger.info("Stopped dataExport ...")         

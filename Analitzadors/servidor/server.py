@@ -194,6 +194,7 @@ class server(threading.Thread):
                 t = threading.Thread(target = self.handleClient, args = [clientSock])
                 t.setDaemon(1)
                 t.start()
-             
+          
+          tReponse.join()         
           self.__disconnectAllClients__()
           self.socketSrv.close()    

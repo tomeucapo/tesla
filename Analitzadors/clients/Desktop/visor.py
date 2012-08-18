@@ -145,7 +145,7 @@ class Visor(QtGui.QMainWindow):
 
         if self.dConfig.exec_():
            self.dConfig.guardar()
-           self.ipServidor=str(self.dConfig.settings.value("ipServidor").toString())
+           self.ipServidor = str(self.dConfig.settings.value("ipServidor").toString())
 
     def onCmdAbout(self):
         QtGui.QMessageBox.about(self,self.tr("Sobre el programa"), u"Visor 1.0\n\nClient per poder monitoritzar el servidor de lectures.\nTomeu Capó i Capó 2009 (C)")
