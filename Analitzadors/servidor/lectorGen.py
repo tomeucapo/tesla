@@ -47,8 +47,8 @@ class lector(threading.Thread):
         lectures = 0
         k = 0 
 
-        self.logger.info("Iniciant lector ...")
-        self.logger.debug("Identificant analitzador ...")
+        self.logger.info("Starting lectorGen ...")
+        self.logger.debug("Detecting power-meter device ...")
         
         idEquip = self.equip.getConfig()
         while not idEquip:
@@ -65,7 +65,7 @@ class lector(threading.Thread):
         self.dataExp.setDaemon(True)       
         self.dataExp.start()
 
-        self.logger.info("Identificat analitzador: %s" % self.idEquip)
+        self.logger.info("Power-meter detected: %s" % self.idEquip)
 
         tempsInicial = time.time()
         horaGravacio = ''
@@ -74,10 +74,10 @@ class lector(threading.Thread):
         k = 0
         while not self.acabar:
             if self.pause:
-               self.logger.info("Possat en pausa el lector per %s" % self.idEquip)
+               self.logger.info("Pausing lector of: %s" % self.idEquip)
                while self.pause:
                      time.sleep(1)
-               self.logger.info("Seguint llegint el %s" % self.idEquip)
+               self.logger.info("Resuming lector of: %s" % self.idEquip)
 
             horaActual = time.strftime("%H:%M")
             diffT = int(int(time.time()) - tempsInicial)
@@ -86,7 +86,7 @@ class lector(threading.Thread):
 
             if horaActual in self.lHores:
                 if ((horaActual != horaGravacio) and lectures > 0):
-                    self.logger.info("Enviant les dades al dataExport ...")
+                    self.logger.info("Sending %d samples to dataExport ...")
                     qOut.put(self.equip.darreraLectura)
                     self.equip.resetValues()
                  
@@ -96,7 +96,7 @@ class lector(threading.Thread):
             # Lectura del analitzador
 
             if ((diffT > self.tempsLectura) or self.forceReq):                
-                self.logger.info("%(hora)s Lectura numero %(nLect)d" % {"hora": time.strftime("%H:%M"), "nLect": lectures})
+                self.logger.debug("%(hora)s Sample number %(nLect)d" % {"hora": time.strftime("%H:%M"), "nLect": lectures})
 
                 response = self.equip.query()
                 if response:
@@ -104,7 +104,7 @@ class lector(threading.Thread):
                    lectures += 1    
                    k = 0
                 else:
-                   self.logger.error("Error en la comunicacio")
+                   self.logger.error("Communications error with %s" % self.idEquip)
                    tempsInicial = int(time.time()) + int(math.exp(k))
                    k = (k + 1) % 10
 
@@ -113,6 +113,7 @@ class lector(threading.Thread):
 
             time.sleep(0.5)
 
+        self.logger.info("Stopping lectorGen of: %s" % self.idEquip)
         self.dataExp.aturar = True
         self.dataExp.join()
-        self.logger.info("Lector per l'analitzador %s aturat!" % self.idEquip)
+        self.logger.info("LectorGen of %s is stopped!" % self.idEquip)
