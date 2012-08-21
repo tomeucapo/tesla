@@ -86,7 +86,7 @@ class lector(threading.Thread):
 
             if horaActual in self.lHores:
                 if ((horaActual != horaGravacio) and lectures > 0):
-                    self.logger.info("Sending %d samples to dataExport ...")
+                    self.logger.info("Sending %d samples to dataExport ..." % lectures)
                     qOut.put(self.equip.darreraLectura)
                     self.equip.resetValues()
                  
