@@ -23,11 +23,15 @@ if __name__ == '__main__':
    acabar = False
    while not acabar:
          resp = ''
-         datasnd = raw_input('] ')
+         try:
+             datasnd = raw_input('] ')
+         except EOFError, e:
+             break
+
          if not datasnd:
-            acabar = True 
-         else:
-            if myClient.enviar(datasnd):
+            break;
+ 
+         if myClient.enviar(datasnd):
                res = resp = myClient.rebre()
                cmd = datasnd.upper()
 
@@ -47,6 +51,6 @@ if __name__ == '__main__':
 
                print res
 
-            if ((resp=="BYE!\r") or (resp=="DISCONNECTED!\r")):
-               acabar = True
+         if ((resp=="BYE!") or (resp=="DISCONNECTED!")):
+            break
 

@@ -103,7 +103,7 @@ cmdsCVMk = {
                     "valEscala" : 1,
                     "numDigits" : 9 },
                     
-            "RFI": {"registre"  : "RFI",
+            "FPT": {"registre"  : "RFI",
                     "numRegs"   : 4,  
                     "descripcio": u"Factor potencia instantánea",  
                     "valEscala" : 0.01,

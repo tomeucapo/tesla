@@ -14,12 +14,14 @@ import pickle
 class cvmData:
       def __init__(self, cvmComm, vars, model):
           self.cvmComm = cvmComm
+          self.id = cvmComm.id
           self.mutex = cvmComm.mutex
           self.variables = vars
           self.logger = None
           self.model = model
           self.regsQuery = cvmCmds.cmdsCVMk 
           self.lastError = ""
+          self.lastRead = ""
           self.lastStatus = {}
           self.lectura = {}
           self.resetValues()
@@ -67,6 +69,9 @@ class cvmData:
               self.darreraLectura[var].append(dades)
               self.lectura[var] = dades
 
+          if rebut:
+             self.lastRead = time.strftime("%d/%m/%Y %H:%M:%S")
+
           return(rebut)  
 
       def identify(self):
@@ -89,6 +94,19 @@ class cvmData:
 
       def status(self):
           pass
+
+      def getConfig(self):
+          self.idStr = retval = self.identify()
+          return(retval)
+
+      @property
+      def lastValues(self):
+          return {"lastRead": self.lastRead, "values": self.lectura}
+
+      @property
+      def definitions(self):
+          return self.regsQuery
+
 
       def __str__(self):
           return pickle.dumps(self.lectura)
