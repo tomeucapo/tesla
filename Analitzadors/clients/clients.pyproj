@@ -5,11 +5,10 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{274549b2-21ad-44c3-afd8-3e121a328cc2}</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>
-    </StartupFile>
+    <StartupFile>Desktop\visor.py</StartupFile>
     <SearchPath>
     </SearchPath>
-    <WorkingDirectory>.</WorkingDirectory>
+    <WorkingDirectory>C:\Users\tomeu\develop\projectes\analitzadors\clients\Desktop</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>clients</Name>
     <RootNamespace>clients</RootNamespace>
@@ -17,6 +16,9 @@
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
+    <IsWindowsApplication>False</IsWindowsApplication>
+    <InterpreterId>9a7a9026-48c1-4688-9d5d-e5699d47d074</InterpreterId>
+    <InterpreterVersion>2.7</InterpreterVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>

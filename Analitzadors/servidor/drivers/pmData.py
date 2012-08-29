@@ -175,10 +175,17 @@ class pmData:
                   self.pmComm.resetConnection()                
                continue
        
-            if self.pmComm.rebre():               
-               self.lastStatus[statVar] = self.pmComm.lastBigIntValue if params["compost"] else self.pmComm.lastResponse
-               self.lastStatus["lastTime"] = time.time()
+            rebut = self.pmComm.rebre()
             self.mutex.release()            
+
+            if rebut:
+               if statVar == 'ERR':
+                  self.lastStatus[statVar] = getErrorMessage()
+               else:
+                  self.lastStatus[statVar] = self.pmComm.lastBigIntValue if params["compost"] else self.pmComm.lastResponse
+
+               self.lastStatus["lastTime"] = time.time()
+            
         
     def loadRanges(self):
         peticionsRng = {}
@@ -203,8 +210,7 @@ class pmData:
                self.rangs[pt] = pmRegs.factorEscala[str(self.pmComm.lastResponse[0])]
             self.mutex.release()
 
-    @property
-    def lastEquipErrors(self):
+    def getErrorMessage(self):
         if not self.lastStatus.get("ERR"):
            return 'NO_ERROR'
 

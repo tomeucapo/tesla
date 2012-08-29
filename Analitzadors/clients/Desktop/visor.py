@@ -6,8 +6,8 @@
 # Client per a connectarse al lector de dades i visualitzar les lectures
 # i gràfiques.
 #
-# Author.......: Tomeu Capó Capó 2010 (C)
-# Last Modified: 29/01/2010
+# Author.......: Tomeu Capó Capó 2012 (C)
+# Last Modified: 22/08/2012
 # Use under terms of GNU public licence.
 
 import time, sys, os
@@ -81,9 +81,13 @@ class Visor(QtGui.QMainWindow):
         self.ui.tableWidget.setHorizontalHeaderLabels(titolsTaula)
         self.lineTable=0
 
+    def avis(self, msg):
+        QtGui.QMessageBox.critical(self,self.tr("Error"), unicode(msg))
+
     def pintaEstat(self, idEquip):
         status = self.cliThr.values[idEquip]["estatLector"]
         statusComm = self.cliThr.values[idEquip]["estatComm"]
+
         if status == STA_PAUSED:
            self.ui.actionIniciar.setEnabled(1)
            self.ui.actionAturar.setEnabled(0)
@@ -91,7 +95,7 @@ class Visor(QtGui.QMainWindow):
         elif status == STA_STARTED:
            self.ui.actionIniciar.setEnabled(0)
            self.ui.actionAturar.setEnabled(1)
-           self.ui.statusbar.showMessage("Servidor de lectures actiu i capturant dades ...")
+           self.ui.statusbar.showMessage("Servidor de lectures actiu i capturant dades ... (%s)" %  self.cliThr.values[idEquip]["lastRead"])
         elif status == STA_STOPPED:
            self.ui.actionIniciar.setEnabled(1)
            self.ui.actionAturar.setEnabled(0)
@@ -148,7 +152,7 @@ class Visor(QtGui.QMainWindow):
            self.ipServidor = str(self.dConfig.settings.value("ipServidor").toString())
 
     def onCmdAbout(self):
-        QtGui.QMessageBox.about(self,self.tr("Sobre el programa"), u"Visor 1.0\n\nClient per poder monitoritzar el servidor de lectures.\nTomeu Capó i Capó 2009 (C)")
+        QtGui.QMessageBox.about(self,self.tr("Sobre el programa"), u"Visor 2.0\n\nClient per poder monitoritzar el servidor de lectures.\nTomeu Capó i Capó 2012 (C)")
 
     def onCmdExportarGrafiques(self):
         """

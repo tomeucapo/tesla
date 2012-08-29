@@ -39,9 +39,10 @@ class clientThread(QThread):
         self.ui.statusbar.showMessage("Llegint variables de %d ..." % idEquip)
         try:
             vars = self.cliLector.getVars(idEquip)["values"]
+            lastRead = self.cliLector.getVars(idEquip)["lastRead"]
         except:
             vars = {}
-        self.values[idEquipCfg] = {"id": "%d: %s" % (idEquip, idEquipStr), "defs": defs, "vars": vars, "estatLector": estatLector, "estatComm": estatComm }
+        self.values[idEquipCfg] = {"id": "%d: %s" % (idEquip, idEquipStr), "defs": defs, "vars": vars, "estatLector": estatLector, "estatComm": estatComm, "lastRead": lastRead }
         return True
     
     def connectar(self):
@@ -83,7 +84,7 @@ class clientThread(QThread):
            self.ui.actionConnectar.setEnabled(1)
            self.ui.actionIniciar.setEnabled(1)
 
-	return True
+        return True
 
     def iniciar(self):
         for id, values in self.values.iteritems():
@@ -105,16 +106,22 @@ class clientThread(QThread):
         while self.seguir:
               k=0
               for id in self.values.keys():
-                  (self.values[id]["estatLector"], self.values[id]["estatComm"]) = self.cliLector.getStatus(id)
-                  if self.values[id]["estatLector"] == STA_STARTED and self.values[id]["estatComm"] == STA_COMM:
-                     try:
-                        self.values[id]["vars"] = self.cliLector.getVars(id)["values"]
-                        self.emit(SIGNAL("pintaVars(int)"), id)
-                     except:
-                        k=10 
-                     
-                  self.emit(SIGNAL("pintaEstat(int)"), id)
+                  try:
+                        (self.values[id]["estatLector"], self.values[id]["estatComm"]) = self.cliLector.getStatus(id)
+                        if self.values[id]["estatLector"] == STA_STARTED and self.values[id]["estatComm"] == STA_COMM:
+                           self.values[id]["vars"] = self.cliLector.getVars(id)["values"]
+                           self.values[id]["lastRead"] = self.cliLector.getVars(id)["lastRead"]
+                           self.emit(SIGNAL("pintaVars(int)"), id)
+                  except socket.error, e:
+                        self.emit(SIGNAL("avis(string)"), str(e)) 
+                        self.seguir=false                      
+                  except Exception, e:
+                        k=10
+                        print "Error: ",str(e)
+                  else:
+                        self.emit(SIGNAL("pintaEstat(int)"), id)
                   
               self.sleep(self.tempsRefresc+k)
 
         self.cliLector.desconnecta()
+        print "Thread stopped ..."
