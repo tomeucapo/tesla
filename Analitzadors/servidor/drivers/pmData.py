@@ -180,7 +180,7 @@ class pmData:
 
             if rebut:
                if statVar == 'ERR':
-                  self.lastStatus[statVar] = getErrorMessage()
+                  self.lastStatus[statVar] = self.getErrorMessage()
                else:
                   self.lastStatus[statVar] = self.pmComm.lastBigIntValue if params["compost"] else self.pmComm.lastResponse
 
