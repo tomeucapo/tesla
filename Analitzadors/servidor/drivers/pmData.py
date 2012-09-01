@@ -179,11 +179,10 @@ class pmData:
             self.mutex.release()            
 
             if rebut:
+               self.lastStatus[statVar] = self.pmComm.lastBigIntValue if params["compost"] else self.pmComm.lastResponse
                if statVar == 'ERR':
-                  self.lastStatus[statVar] = self.getErrorMessage()
-               else:
-                  self.lastStatus[statVar] = self.pmComm.lastBigIntValue if params["compost"] else self.pmComm.lastResponse
-
+                  self.lastStatus["ERR_MSG"] = self.getErrorMessage()
+                            
                self.lastStatus["lastTime"] = time.time()
             
         
