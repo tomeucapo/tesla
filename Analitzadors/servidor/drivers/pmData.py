@@ -217,7 +217,7 @@ class pmData:
         retval=[]        
         bitMapError = self.lastStatus["ERR"]
         if bitMapError:
-           for mask, msgError in ERROR_MASK.itertems():            
+           for mask, msgError in ERROR_MASK.iteritems():            
                if bitMapError & mask:
                   retval.append(msgError)
 
