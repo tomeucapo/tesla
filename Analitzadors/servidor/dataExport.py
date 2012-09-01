@@ -114,6 +114,7 @@ class dataExport(threading.Thread):
 
           try:
                 self.persistDb = lite.connect(DB_BULK)
+                self.persistDb.text_factory = str
           except lite.DatabaseError, e:
                 self.logger.fatal(str(e))
                 return
