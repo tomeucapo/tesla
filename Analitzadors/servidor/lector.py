@@ -1,4 +1,4 @@
-#!/usr/bin/python2.6
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 import time, sys, os
@@ -16,7 +16,7 @@ LEVELS = {'debug':    logging.DEBUG,
 try:
     logging.config.fileConfig("logging.ini")
 except Exception, e:
-    print "Error al obrir el fitxer de la configuracio de logs"
+    print "Error al obrir el fitxer de la configuracio de logs: ",str(e)
     sys.exit(-1)
 
 def getConfig():

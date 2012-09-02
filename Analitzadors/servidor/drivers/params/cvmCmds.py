@@ -52,7 +52,7 @@ cmdsCVMk = {
             "PAT": {"registre"  : "RPI",
                     "numRegs"   : 4,  
                     "descripcio": u"Potencia activa instantanea",  
-                    "valEscala" : 1,
+                    "valEscala" : 0.001,
                     "numDigits" : 9 },
 
             "RPM": {"registre"  : "RPM",
@@ -70,7 +70,7 @@ cmdsCVMk = {
             "RLI": {"registre"  : "RLI",
                     "numRegs"   : 4,  
                     "descripcio": u"Potencia inductiva instantanea",  
-                    "valEscala" : 1,
+                    "valEscala" : 0.001,
                     "numDigits" : 9 },
             
             "RLM": {"registre"  : "RLM",
@@ -88,7 +88,7 @@ cmdsCVMk = {
             "RCI": {"registre"  : "RCI",
                     "numRegs"   : 4,  
                     "descripcio": u"Potencia capacitiva instantanea",  
-                    "valEscala" : 1,
+                    "valEscala" : 0.001,
                     "numDigits" : 9 },
                     
             "RCM": {"registre"  : "RCM",

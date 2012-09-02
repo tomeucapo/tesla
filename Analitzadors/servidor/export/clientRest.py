@@ -8,7 +8,9 @@
 
 from exceptions import * 
 import time, logging
-import urllib2, urllib, json
+import urllib2, urllib
+
+import simplejson as json
 
 class clientRest:
       def __init__(self, target, equip):         
@@ -38,8 +40,8 @@ class clientRest:
              strError = str(dataR[1]) if len(dataR) > 0 else str(e)
              if e.code == 409:
                 raise ClientDuplicateEntry, "Registre ja existent: %s" % strError
-             else:
-                raise ClientError, "Error enviant lectura: %s" % strError
+             if e.code != 201:
+                raise ClientError, "Error enviant lectura: %d: %s" % (e.code, strError)
           except urllib2.URLError, e:
              raise ClientError, e.reason
                     

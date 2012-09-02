@@ -59,21 +59,40 @@ class cvmComm:
                   
       def rebre(self):
           retval = True
-          
-          c = self.serie.read()
-         
+
+          if not self.serie.isOpen():
+             self.lastError = E_NOT_OPEN_COMM
+             return False 
+
+          try:
+              c = self.serie.read(1)
+          except serial.serialutil.SerialException, e:
+              self.logger.error(str(e))
+              self.lastError = E_NOT_RESPONSE
+              return False
+
           sTime = time.time()
           while c != STX:
-                if time.time()-sTime < TOUT_RX:
-                   c = self.serie.read()
-                else:
+                if time.time()-sTime > TOUT_RX:
+                   self.lastError = E_NOT_RESPONSE
+                   return False
+                   
+                try:
+                   c = self.serie.read(1)
+                except serial.serialutil.SerialException, e:
+                   self.logger.error(str(e))
                    self.lastError = E_NOT_RESPONSE
                    return False
           
           inst = ''
           while c != ETX:
                 inst += c
-                c = self.serie.read()
+                try:
+                   c = self.serie.read(1)
+                except serial.serialutil.SerialException, e:
+                   self.logger.error(str(e))
+                   self.lastError = E_NOT_RESPONSE
+                   return False
 
           chkRx = int("0x"+inst[-2:], 16)
           frameRx = inst[:-2] 

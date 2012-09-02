@@ -9,7 +9,7 @@
 #
 
 from params import cvmCmds 
-import pickle
+import pickle, time
 
 class cvmData:
       def __init__(self, cvmComm, vars, model):
