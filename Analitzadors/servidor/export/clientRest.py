@@ -10,7 +10,11 @@ from exceptions import *
 import time, logging
 import urllib2, urllib
 
-import simplejson as json
+# Patch for Python 2.5.2 support
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 class clientRest:
       def __init__(self, target, equip):         
@@ -40,6 +44,8 @@ class clientRest:
              strError = str(dataR[1]) if len(dataR) > 0 else str(e)
              if e.code == 409:
                 raise ClientDuplicateEntry, "Registre ja existent: %s" % strError
+
+            # Patch for Python 2.5.2 support
              if e.code != 201:
                 raise ClientError, "Error enviant lectura: %d: %s" % (e.code, strError)
           except urllib2.URLError, e:

@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{a6189e61-1d9f-4ef2-89c9-15b44a48ecc4}</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>
+    </StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>frontalweb</Name>
+    <RootNamespace>frontalweb</RootNamespace>
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="api\client.py" />
+    <Compile Include="api\comm.py" />
+    <Compile Include="api\__init__.py" />
+    <Compile Include="lectures\admin.py" />
+    <Compile Include="lectures\calculs.py" />
+    <Compile Include="lectures\historic.py" />
+    <Compile Include="lectures\models.py" />
+    <Compile Include="lectures\views.py" />
+    <Compile Include="lectures\__init__.py" />
+    <Compile Include="manage.py" />
+    <Compile Include="settings.py" />
+    <Compile Include="urls.py" />
+    <Compile Include="ws\emitters.py" />
+    <Compile Include="ws\handlers.py" />
+    <Compile Include="ws\urls.py" />
+    <Compile Include="ws\__init__.py" />
+    <Compile Include="__init__.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="admin" />
+    <Folder Include="api" />
+    <Folder Include="lectures" />
+    <Folder Include="templates" />
+    <Folder Include="ws" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="admin\base_site.html" />
+    <Content Include="templates\costs.html" />
+    <Content Include="templates\filterHead.html" />
+    <Content Include="templates\head.html" />
+    <Content Include="templates\main.html" />
+    <Content Include="templates\menuHead.html" />
+    <Content Include="templates\rt.html" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>

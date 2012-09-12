@@ -1,0 +1,15 @@
+
+  <h1>Tesla Analyzer</h1>
+  <p id="breadcrumbs">
+  {% if user.is_authenticated %}
+    Benvingut, {{ user.username }}
+    <a href="/accounts/logout/">tancar la sessió</a> |
+    <a href="/accounts/profile/">Perfil</a> |
+  {% else %}
+    <a href="/accounts/login/">Iniciar la sessió</a> |
+    <a href="/accounts/new/">Registra't</a> |
+  {% endif %}
+  <a href="/">Consulta de lectures</a> |
+  <a href="/costs">Estimació de costs</a> |
+  <a href="/visor">Visors temps real</a> 
+  </p>

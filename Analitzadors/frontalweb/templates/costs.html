@@ -1,0 +1,128 @@
+<html>
+{% include "head.html" %}
+<body class="yui-skin-sam">
+  
+  {% include "menuHead.html" %}
+
+  {% include "filterHead.html" %}
+  
+  <div id="resultats" style="float: left; display:inline;"></div> 
+
+  <script type="text/javascript">  
+  YAHOO.util.Event.addListener(window, "load", function() {
+        var Event = YAHOO.util.Event,
+            Dom = YAHOO.util.Dom;
+
+        initLoadingWindow();
+        initSearchFields();
+ 
+        var histColumnDefs = [
+            {key:"data", label: "Data", sortable: true, parser: "date"},
+            
+            {label: "Tarifa P1",
+                    children: [
+                              {key:"P1.consum", label: "kW", parser: "number", formatter: "formataValor"},
+                              {key:"P1.import", label: "Import", parser: "number", formatter: "formataValor"},
+                    ]
+            },
+            {label: "Tarifa P2",
+                    children: [
+                              {key:"P2.consum", label: "kW", parser: "number", formatter: "formataValor"},
+                              {key:"P2.import", label: "Import", parser: "number", formatter: "formataValor"},
+                    ]
+            },
+            {label: "Tarifa P3",
+                    children: [
+                              {key:"P3.consum", label: "kW", parser: "number", formatter: "formataValor"},
+                              {key:"P3.import", label: "Import", parser: "number", formatter: "formataValor"},
+                    ]
+            },
+            {label: "Totals",
+                    children: [
+                              {key:"consumTotal", label: "Consum (kW)", sortable: true , parser: "number", formatter: "formataValor"},
+                              {key:"costTotal", label: "Import", sortable: true , parser: "number", formatter: "formataValor"},
+                    ]
+            }
+        ];
+
+        YAHOO.widget.DataTable.Formatter.formataValor = function(elCell, oRecord, oColumn, oData)
+        {
+                  if(!oData)
+                    return;
+                  
+                  switch(oColumn.field)
+                  {
+                         case "P1.import":color="green";
+                                          break;
+                         case "P2.import":color="red";
+                                          break;
+                         case "P3.import":color="blue";
+                                          break;
+                                 default: color="black";
+                                          break;
+                  }                     
+                  elCell.innerHTML = '<div align="right"><font style="color: '+color+'">'+oData+'<font></div>';
+        };
+      
+        var histDataSource = new YAHOO.util.DataSource("/costs/");
+        histDataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
+        histDataSource.connXhrMode = "queueRequests";
+        histDataSource.responseSchema = {
+            resultsList: "ResultSet.Linies",
+            fields : [
+                        { key: "data" },                   
+                        { key: "P1.consum" },
+                        { key: "P1.import" },  
+                        { key: "P2.consum" },
+                        { key: "P2.import" },
+                        { key: "P3.consum" },
+                        { key: "P3.import" }, 
+                        { key: "consumTotal" },
+                        { key: "costTotal" }
+                     ],
+        };
+
+        var histDataTable = new YAHOO.widget.DataTable("resultats", histColumnDefs, histDataSource, 
+                                                       {scrollable: true, height:"430px", width: "750px"});
+                                                            
+        histDataTable.subscribe("rowMouseoverEvent", histDataTable.onEventHighlightRow); 
+	histDataTable.subscribe("rowMouseoutEvent", histDataTable.onEventUnhighlightRow); 
+        histDataTable.subscribe("rowClickEvent", histDataTable.onEventSelectRow);
+        
+        Event.on(Dom.get("search"), "click", function() {
+          
+              var mySuccessHandler = function() {
+                  this.onDataReturnInitializeTable.apply(this, arguments);
+                  YAHOO.loading.container.wait.hide();
+              };
+              
+              var myFailureHandler = function() {
+                  this.showTableMessage(YAHOO.widget.DataTable.MSG_ERROR, YAHOO.widget.DataTable.CLASS_ERROR);
+                  this.onDataReturnAppendRows.apply(this, arguments);
+                  YAHOO.loading.container.wait.hide();
+              };
+
+              var oCallback = {
+                  success : mySuccessHandler,
+                  failure : myFailureHandler,
+                  scope : histDataTable,
+                  argument : histDataTable.getState()
+              };
+      
+              var dataInici = Dom.get("dateFrom");
+              var dataFi = Dom.get("dateTo");
+              var node = Dom.get("nodeId");
+              var analizer = Dom.get("analizerId");
+	      
+              if (dataInici.value.match("^[0-9]{1,2}\-[0-9]{1,2}\-[0-9]{4}") && dataFi.value.match("^[0-9]{1,2}\-[0-9]{1,2}\-[0-9]{4}"))  
+              {
+                  YAHOO.loading.container.wait.show();
+                  histDataSource.sendRequest(analizer.value+"/"+dataInici.value+"/"+dataFi.value, oCallback);   
+              } else
+                 alert("El format de les dates es incorrecte!");               
+        });
+  });
+  </script>
+</body>
+</html>
+

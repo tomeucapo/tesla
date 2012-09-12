@@ -1,0 +1,119 @@
+<head>
+   <title>Tesla Analyzer</title>
+   <meta http-equiv="content-type" content="text/html; charset=ISO-8859-15"/>
+   <link rel=stylesheet type="text/css" href="/static/css/estils.css" media="screen">
+
+   <link rel="stylesheet" type="text/css" href="/static/js/yui/build/fonts/fonts-min.css" /> 
+   <link rel="stylesheet" type="text/css" href="/static/js/yui/build/datatable/assets/skins/sam/datatable.css" /> 
+   <link rel="stylesheet" type="text/css" href="/static/js/yui/build/button/assets/skins/sam/button.css" /> 
+   <link rel="stylesheet" type="text/css" href="/static/js/yui/build/container/assets/skins/sam/container.css" /> 
+   <link rel="stylesheet" type="text/css" href="/static/js/yui/build/calendar/assets/skins/sam/calendar.css" /> 
+   <link rel="stylesheet" type="text/css" href="/static/js/yui/build/autocomplete/assets/skins/sam/autocomplete.css" /> 
+   <link rel="stylesheet" type="text/css" href="/static/js/yui/build/autocomplete/assets/skins/sam/autocomplete-skin.css" />
+   
+   <script type="text/javascript" src="/static/js/yui/build/yahoo-dom-event/yahoo-dom-event.js"></script> 
+   <script type="text/javascript" src="/static/js/yui/build/connection/connection-min.js"></script> 
+   <script type="text/javascript" src="/static/js/yui/build/json/json-min.js"></script> 
+   <script type="text/javascript" src="/static/js/yui/build/element/element-min.js"></script> 
+   <script type="text/javascript" src="/static/js/yui/build/datasource/datasource-min.js"></script> 
+   <script type="text/javascript" src="/static/js/yui/build/datatable/datatable-min.js"></script> 
+   <script type="text/javascript" src="/static/js/yui/build/button/button-min.js"></script> 
+   <script type="text/javascript" src="/static/js/yui/build/container/container-min.js"></script>    
+   <script type="text/javascript" src="/static/js/yui/build/animation/animation-min.js"></script>
+   <script type="text/javascript" src="/static/js/yui/build/dragdrop/dragdrop-min.js"></script>
+   <script type="text/javascript" src="/static/js/yui/build/autocomplete/autocomplete-min.js"></script>
+
+   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+   <script type="text/javascript" src="/static/js/highcharts/js/highcharts.js"></script>
+   <script type="text/javascript" src="/static/js/highcharts/js/modules/exporting.js"></script>
+   <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+
+   <script type="text/javascript">
+     function initLoadingWindow()
+     {
+       YAHOO.namespace("loading.container");
+       YAHOO.loading.container.wait = 
+	    	new YAHOO.widget.Panel("wait",  
+			{ width:"240px", 
+			  fixedcenter:true, 
+			  close:false, 
+			  draggable:false, 
+			  zindex:4,
+			  modal:true,
+			  visible:false
+			} 
+	    );
+ 
+        YAHOO.loading.container.wait.setHeader("Esperi per favor...");
+        YAHOO.loading.container.wait.setBody('<img src="http://l.yimg.com/a/i/us/per/gr/gp/rel_interstitial_loading.gif" />');
+        YAHOO.loading.container.wait.render(document.body);   
+     }
+    
+     function initSearchFields()
+     {
+        var Dom = YAHOO.util.Dom;
+        var nodesDS = new YAHOO.util.DataSource("/node");
+        nodesDS.responseType = YAHOO.util.DataSource.TYPE_JSON;
+        nodesDS.connXhrMode = "queueRequests";
+        nodesDS.responseSchema = {
+            resultsList: "ResultSet.Nodes",
+            fields: ["id","nom","ubicacio","host"]
+        };
+
+        var analizersDS = new YAHOO.util.DataSource("/node");
+        analizersDS.responseType = YAHOO.util.DataSource.TYPE_JSON;
+        analizersDS.connXhrMode = "queueRequests";
+        analizersDS.responseSchema = {
+            resultsList: "ResultSet.Analitzadors",
+            fields: ["id", "addr","model","fabricant"]
+        };
+	
+	var nodesAC = new YAHOO.widget.AutoComplete("node", "nodesContainer", nodesDS);
+	nodesAC.resultTypeList = false;
+	nodesAC.generateRequest = function(sQuery)
+	{
+	        return "/sQuery="+sQuery;
+	};
+	
+	nodesAC.itemSelectEvent.subscribe(function(sType, aArgs) {
+	        var oData = aArgs[2];
+	        Dom.get("node").value = oData.nom;
+		Dom.get("nodeId").value = oData.id;
+	});
+	
+	nodesAC.formatResult = function(oResultData, sQuery, sResultMatch) {
+	        return "<font style=\"color: gray;\">"+oResultData.nom+"</font> ("+oResultData.ubicacio+")";
+        };
+
+	var analizerAC = new YAHOO.widget.AutoComplete("analizer", "analizersContainer", analizersDS);
+	analizerAC.resultTypeList = false;
+	analizerAC.generateRequest = function(sQuery)
+	{
+	        var nodeId = Dom.get("nodeId").value;
+	        if (!nodeId)
+		{
+		    alert("No ha triat un node abans!")
+		    return;
+		}
+		
+	        return "/"+nodeId+"/analizers";
+	};
+	
+	analizerAC.itemSelectEvent.subscribe(function(sType, aArgs) {
+	        var oData = aArgs[2];
+	        Dom.get("analizer").value = oData.model+" (Addr = "+oData.addr+")";
+		Dom.get("analizerId").value = oData.id;
+		
+	       {% if not historial and not lectures %}
+	       Dom.get("analizerAddr").value = oData.addr;
+	       loadAnalizerDefs();
+	       {% endif %}
+	});
+	
+	analizerAC.formatResult = function(oResultData, sQuery, sResultMatch) {
+	        return "("+oResultData.id+") <font style=\"color: blue;\">"+oResultData.model+" "+oResultData.fabricant+" (Addr= "+oResultData.addr+")";
+        };
+     }
+   </script>
+</head>
+

@@ -150,8 +150,9 @@ class pmData:
         if not retval:
            return ''
         
-        self.status()
-        self.loadRanges()
+        self.status()               # Determinal l'estat de l'analitzador
+        self.__getSerial__()        # Agafam el número de série i la versió del sistema operatiu
+        self.loadRanges()           # Carrega els registres d'escala del propi analitzador
         
         self.logger.debug("\tGuardant configuracio del dispositiu a la cache...")
         fConfDrv = open(self.fileNameCache,"wb")
@@ -160,8 +161,30 @@ class pmData:
 
         return(retval)
 
+    def __getSerial__(self):
+        for statVar in ["VSO", "NSN"]:
+            try:
+                params = pmRegs.tRegs[self.model][statVar]
+            except KeyError, e:
+                raise KeyError, "Aquest driver de %s no te configurat el parametre %s" % (self.model, statVar)
+                
+            self.mutex.acquire()
+            if not self.pmComm.enviar(READ_WORDS, params["registre"], params["numRegs"]):
+               self.mutex.release()
+               if self.pmComm.lastError in [E_NOT_OPEN_COMM, E_SND_ERROR]:
+                  self.logger.error("Error enviant, reiniciarem connexio del dispositiu") 
+                  self.pmComm.resetConnection()                
+               continue
+       
+            rebut = self.pmComm.rebre()
+            self.mutex.release()            
+
+            if rebut:
+               self.lastStatus[statVar] = self.pmComm.lastBigIntValue if params["compost"] else self.pmComm.lastResponse                           
+               self.lastStatus["lastTime"] = time.time()
+
     def status(self):
-        for statVar in ["HMU", "ERR", "VSO", "NSN"]:
+        for statVar in ["HMU", "ERR"]:
             try:
                 params = pmRegs.tRegs[self.model][statVar]
             except KeyError, e:

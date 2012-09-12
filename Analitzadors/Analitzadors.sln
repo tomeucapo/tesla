@@ -7,9 +7,11 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "clients", "clients\clients.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{20E19E72-73D2-4955-9740-EC2E6651E522}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "frontalweb", "frontalweb\frontalweb.pyproj", "{A6189E61-1D9F-4EF2-89C9-15B44A48ECC4}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 3
+		SccNumberOfProjects = 4
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs.codeplex.com/tfs/tfs23
 		SccLocalPath0 = .
@@ -19,6 +21,9 @@ Global
 		SccProjectUniqueName2 = servidor\\servidor.pyproj
 		SccProjectName2 = servidor
 		SccLocalPath2 = servidor
+		SccProjectUniqueName3 = frontalweb\\frontalweb.pyproj
+		SccProjectName3 = frontalweb
+		SccLocalPath3 = frontalweb
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +35,8 @@ Global
 		{482A6BBE-6F30-4B76-B5BA-9F58A463C9AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{274549B2-21AD-44C3-AFD8-3E121A328CC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{274549B2-21AD-44C3-AFD8-3E121A328CC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6189E61-1D9F-4EF2-89C9-15B44A48ECC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6189E61-1D9F-4EF2-89C9-15B44A48ECC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

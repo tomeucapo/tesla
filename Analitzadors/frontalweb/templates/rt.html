@@ -1,0 +1,157 @@
+<html>
+{% include "head.html" %}
+<body class="yui-skin-sam">
+  
+  {% include "menuHead.html" %}
+  <div id="container"></div>
+  
+  {% include "filterHead.html" %}
+
+  <div class="caixa">
+    <select id="selectVariable" name="selectVariable" multiple="multiple" size="10" style="width: 25em">      
+    </select>
+  </div>  
+  <div class="caixa">
+    <div id='chart_div'></div>
+  </div>
+  
+  <script type="text/javascript">
+  
+  function getVarsSelected()
+  {
+           var selected = [];
+	   selectVar =  YAHOO.util.Dom.get("selectVariable");
+           for (var i = 0; i < selectVar.options.length; i++)
+	       if (selectVar.options[ i ].selected)
+                   selected.push(selectVar.options[ i ].value);
+		   
+	   return selected;
+  }
+  
+  function fillSelect(o)
+  {
+	   dataDefs = YAHOO.lang.JSON.parse(o.responseText);
+	   selectVar =  YAHOO.util.Dom.get("selectVariable");
+	   
+	   selectVar.innerHTML="";
+	   for (varName in dataDefs)
+	   {
+		var newOption = document.createElement('option');
+		newOption.value = varName;
+		newOption.innerHTML = varName+": "+dataDefs[varName].descripcio;
+		selectVar.appendChild(newOption);
+	   }
+  }
+  
+  function errorRead(o)
+  {
+         alert("Error "+o.status+" : "+o.statusText);
+  }
+  
+  function loadAnalizerDefs()
+  {
+	  var conn = YAHOO.util.Connect;
+	  nodeId = YAHOO.util.Dom.get("nodeId").value;
+          analizerId = YAHOO.util.Dom.get("analizerAddr").value;
+	  
+	  if (!nodeId && !analizerId)
+	      alert("No s'ha especificat cap analitzador");
+	  
+          conn.setDefaultPostHeader(false);
+          conn.initHeader("Content-Type", "application/json; charset=utf-8");
+          conn.asyncRequest("GET","/central/ws/rt/get/Defs/"+nodeId+"/"+analizerId,
+                                           {
+                                              success: fillSelect,
+                                              failure: errorRead
+                                           });        	   
+  }
+  
+  google.load('visualization', '1', {packages:['gauge']});
+  YAHOO.util.Event.addListener(window, "load", function() {
+        var Event = YAHOO.util.Event,
+            Dom = YAHOO.util.Dom;
+
+        initLoadingWindow();
+        initSearchFields();
+ 
+        var gauges = new google.visualization.Gauge(document.getElementById('chart_div'));
+
+        var pollerObj = {
+            conn: YAHOO.util.Connect,
+
+	     prepareData: function(selectedVars) {
+		var listData = [ ['Label', 'Value'] ];		
+		for (var i = 0; i < selectedVars.length; i++)
+		{
+		    for (var j = 0; j < dataR.values[selectedVars[i]].length; j++)
+			listData.push([selectedVars[i]+" ("+j+")", Math.round(dataR.values[selectedVars[i]][j])]);
+		}		   
+	        return google.visualization.arrayToDataTable( listData );
+	    },
+	    
+            drawChart: function(o) {
+                dataR = YAHOO.lang.JSON.parse(o.responseText);
+                
+		lastRead = Dom.get("lastRead");
+                lastRead.innerHTML = 'Darrera lectura: <strong>'+dataR.lastRead+'</strong>';
+		
+		var data =  pollerObj.prepareData(getVarsSelected());
+
+                var options = {
+                    width: 750, height: 420,
+                    max: 440,
+                    minorTicks: 10,
+                };
+
+                gauges.draw(data, options);
+		Dom.get("statusRead").innerHTML="";
+           },
+        
+            errorRead: function(o) {
+                     alert("Error "+o.status+" : "+o.statusText);
+		     gauges.clearChart();
+		     Dom.get("statusRead").innerHTML="Error "+o.status+" : "+o.statusText;
+            },
+
+            getVars: function(data) {
+                     if (!Dom.get("rtC").checked) 
+                         return;
+
+                     nodeId = Dom.get("nodeId").value;
+                     analizerId = Dom.get("analizerAddr").value;
+
+                     this.conn.setDefaultPostHeader(false);
+                     this.conn.initHeader("Content-Type", "application/json; charset=utf-8");
+		     
+		     Dom.get("statusRead").innerHTML="Consultant ...";
+                     this.conn.asyncRequest("GET","/central/ws/rt/get/Vars/"+nodeId+"/"+analizerId,
+                                           {
+                                              success: this.drawChart,
+                                              failure: this.errorRead
+                                           });                     
+            } 
+        };
+
+	rtC = Dom.get("rtC");
+        Event.on(rtC, "click", function() {
+		if (rtC.checked)
+		{
+		   if (getVarsSelected().length == 0)
+		   {
+			alert("No ha seleccionat cap variable per visionar!");
+			rtC.checked = false;
+			return;
+		   }		   
+		   pollerObj.getVars(null);
+		   var tPolling = YAHOO.lang.later(30000, pollerObj, "getVars", {nodeId: Dom.get("nodeId").value, analizerId: Dom.get("analizerId").value }, true);
+		} else
+		  if (tPolling) tPolling.cancel();
+		   
+	});
+	
+        
+  });
+  </script>   
+</body>
+</html>
+

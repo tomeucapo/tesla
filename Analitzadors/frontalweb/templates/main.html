@@ -1,0 +1,191 @@
+<html>
+{% include "head.html" %}
+<body class="yui-skin-sam">
+  
+  {% include "menuHead.html" %}
+  <div id="container"></div>
+  
+  {% include "filterHead.html" %}
+  
+  <div id="resultats" style="float: left; display:inline;"></div> 
+  <div id="grafica" style="float: right; display:inline; min-width: 600px; height: 400px; margin: 0 auto"></div>
+ 
+  <script type="text/javascript"> 
+  YAHOO.util.Event.addListener(window, "load", function() {
+        var Event = YAHOO.util.Event,
+            Dom = YAHOO.util.Dom;
+
+        initLoadingWindow();
+        initSearchFields();
+        var histColumnDefs = [
+            {key:"variable", label: "Variable", sortable: true },
+            {key:"dataHora", label:"Data/Hora", sortable:true},
+            {label: "Valor",
+                    children: [
+                              {key:"V0", label: "R", formatter: "formataValor"},
+                              {key:"V1", label: "S", formatter: "formataValor"},
+                              {key:"V2", label: "T", formatter: "formataValor"},
+                              {key:"VU", label: "N/Total", formatter: "formataValor"}
+                    ]
+            },
+            {key:"unitats", label: "Unitat", sortable: false },            
+        ];
+
+        YAHOO.widget.DataTable.Formatter.formataValor = function(elCell, oRecord, oColumn, oData)
+        {
+                  var data = oRecord.getData("valor");
+                  if (typeof data == "object")
+                  {
+                   if (oColumn.field=='V0') 
+                       elCell.innerHTML = '<div align="right">'+data[0]+'</div>'; 
+                   else if (oColumn.field=='V1')
+                       elCell.innerHTML = '<div align="right">'+data[1]+'</div>';
+                   else if (oColumn.field=='V2')
+                       elCell.innerHTML = '<div align="right">'+data[2]+'</div>';
+                   else if (oColumn.field=='VU' && data.length > 3)
+                       elCell.innerHTML = '<div align="right"><font style="color: blue;">'+data[3]+'</font></div>';           
+                  } else {
+                      if (oColumn.field!='V0' && oColumn.field!='V1' && oColumn.field!='V2')
+                          elCell.innerHTML = '<div align="right">'+data+'</div>';
+                  }
+        };
+        
+        var histDataSource = new YAHOO.util.DataSource("/central/ws/history/load/");
+        histDataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
+        histDataSource.connXhrMode = "queueRequests";
+        histDataSource.responseSchema = {
+            resultsList: "ResultSet.Lectures",
+            fields: ["variable","dataHora","valor","unitats"]
+        };
+
+        var histDataTable = new YAHOO.widget.DataTable("resultats", histColumnDefs, histDataSource, 
+                                                       {scrollable: true, height:"430px", width: "750px"});
+                                                            
+        histDataTable.subscribe("rowMouseoverEvent", histDataTable.onEventHighlightRow); 
+	histDataTable.subscribe("rowMouseoutEvent", histDataTable.onEventUnhighlightRow); 
+        histDataTable.subscribe("rowClickEvent", histDataTable.onEventSelectRow);
+
+        function getDataSeries(data)
+        {
+                 var dInici = new Date(data[0].dataHora);
+                
+                 var seriesData=[{
+                      type: 'area',
+                      name: data[0].variable,
+                      pointInterval: 900000,
+                      pointStart: Date.UTC(dInici.getFullYear(), dInici.getMonth(), dInici.getDate(), dInici.getHours(), dInici.getMinutes()),
+                      data: []
+                   }];
+
+                 var graphData = seriesData[0].data;
+                 for(i=0;i<data.length;i++)
+                    graphData.push(data[i].valor);
+
+                 return(seriesData); 
+        }
+
+      
+        Event.on(Dom.get("search"), "click", function() {   
+              var mySuccessHandler = function() {
+                  this.onDataReturnInitializeTable.apply(this,arguments);
+                  dataChart = arguments[1].results;
+                  if (Dom.get("chartC").checked)
+                      chart = new Highcharts.Chart({
+                          chart: {
+                                  renderTo: 'grafica',
+                                  zoomType: 'x',
+                                  spacingRight: 20
+                          },
+                          title: {
+                                  text: 'Grafica de '+dataChart[0].variable
+                          },
+                          subtitle: {
+                                  text: document.ontouchstart === undefined ?
+                                        'Click and drag in the plot area to zoom in' :
+                                        'Drag your finger over the plot to zoom in'
+                          },
+                          xAxis: {
+                                  type: 'datetime',
+                                  maxZoom: 900000, // fourteen days
+                                  title: {
+                                       text: null
+                                  }
+                          },
+                          yAxis: {
+                                  title: {
+                                        text: dataChart[0].unitats
+                                  },
+                                  min: 0,
+                                  startOnTick: true, 
+                                  showFirstLabel: true
+                          },
+                          tooltip: {
+                                  shared: true
+                          },
+                          legend: {
+                                  enabled: false
+                          },
+                          plotOptions: {
+                                  area: {
+                                       fillColor: {
+                                               linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1},
+                                               stops: [
+                                                       [0, Highcharts.getOptions().colors[0]],
+                                                       [1, 'rgba(2,0,0,0)']
+                                                      ]
+                                       },
+                                       lineWidth: 1,
+                                       marker: {
+                                            enabled: false,
+                                            states: {
+                                               hover: {
+                                                  enabled: true,
+                                                  radius: 5
+                                               }      
+                                            }
+                                       },
+                                       shadow: false,
+                                       states: {
+                                            hover: {
+                                               lineWidth: 1
+                                            }
+                                       }
+                                  }
+                          },
+                          series: getDataSeries(dataChart)
+                      }); 
+
+                  YAHOO.loading.container.wait.hide();
+              };
+              
+              var myFailureHandler = function() {
+                  this.showTableMessage(YAHOO.widget.DataTable.MSG_ERROR, YAHOO.widget.DataTable.CLASS_ERROR);
+                  this.onDataReturnAppendRows.apply(this,arguments);
+                  YAHOO.loading.container.wait.hide();
+              };
+
+              var oCallback = {
+                  success : mySuccessHandler,
+                  failure : myFailureHandler,
+                  scope : histDataTable,
+                  argument : histDataTable.getState()
+              };
+      
+              var dataInici = Dom.get("dateFrom");
+              var dataFi = Dom.get("dateTo");
+              var node = Dom.get("nodeId");
+              var analizer = Dom.get("analizerId");
+              var variable = Dom.get("varC");
+	      
+              if (dataInici.value.match("^[0-9]{1,2}\-[0-9]{1,2}\-[0-9]{4}") && dataFi.value.match("^[0-9]{1,2}\-[0-9]{1,2}\-[0-9]{4}"))  
+              {
+                  YAHOO.loading.container.wait.show();
+                  histDataSource.sendRequest(analizer.value+"/"+variable.value+"/"+dataInici.value+"/"+dataFi.value, oCallback);   
+              } else
+                 alert("El format de les dates es incorrecte!");
+        });
+  });
+  </script>   
+</body>
+</html>
+

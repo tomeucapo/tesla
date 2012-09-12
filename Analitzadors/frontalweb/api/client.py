@@ -35,7 +35,7 @@ class ctrlLector(commLector):
           self.idEquip = idEquip
           
       def getId(self, pIdEquip=None):
-          idEquip = pIdEquip if pIdEquip >= 0 else self.idEquip
+          idEquip = pIdEquip if pIdEquip else self.idEquip
           res = ''
           if self.connectat:
              if self.enviar("GETID@%s" % idEquip):
@@ -61,7 +61,7 @@ class ctrlLector(commLector):
           return self.config
 
       def getVars(self, pIdEquip=None):
-          idEquip = pIdEquip if pIdEquip >= 0 else self.idEquip
+          idEquip = pIdEquip if pIdEquip else self.idEquip
           if self.connectat:
              if self.enviar("GETVARS@%s" % idEquip):
                 res = self.rebre()
@@ -74,7 +74,7 @@ class ctrlLector(commLector):
           return self.vars
  
       def getDefs(self, pIdEquip=None):
-          idEquip = pIdEquip if pIdEquip >= 0 else self.idEquip
+          idEquip = pIdEquip if pIdEquip else self.idEquip
           if self.connectat:
              if self.enviar("GETDEFS@%s" % idEquip):
                 self.defs = pickle.loads(self.rebre())
@@ -93,7 +93,7 @@ class ctrlLector(commLector):
 
       def pause(self, pIdEquip=None):
           retval = False
-          idEquip = pIdEquip if pIdEquip >= 0 else self.idEquip
+          idEquip = pIdEquip if pIdEquip else self.idEquip
 
           if self.connectat:
              if self.enviar("PAUSE@%s" % idEquip):
@@ -104,7 +104,7 @@ class ctrlLector(commLector):
 
       def resume(self, pIdEquip=None):
           retval = False
-          idEquip = pIdEquip if pIdEquip >= 0 else self.idEquip
+          idEquip = pIdEquip if pIdEquip else self.idEquip
 
           if self.connectat:
              if self.enviar("RESUME@%s" % idEquip):
@@ -115,7 +115,7 @@ class ctrlLector(commLector):
       
       def start(self, pIdEquip=None):
           retval = False
-          idEquip = pIdEquip if pIdEquip >= 0 else self.idEquip
+          idEquip = pIdEquip if pIdEquip else self.idEquip
           
           if self.connectat:
              if self.enviar("START@%s" % idEquip):
@@ -128,7 +128,7 @@ class ctrlLector(commLector):
         
       def getStatus(self, pIdEquip=None):
           retval = (-1, -1)
-          idEquip = pIdEquip if pIdEquip >= 0 else self.idEquip
+          idEquip = pIdEquip if pIdEquip else self.idEquip
           if not self.connectat:
              return retval
 
@@ -143,7 +143,7 @@ class ctrlLector(commLector):
           else:
              status = STA_STOPPED
 
-          if "NOCOMM" in resp:
+          if resp.endswith("NOCOMM"):
              retval = (status, STA_NOCOMM)
           else:
              retval = (status, STA_COMM)
