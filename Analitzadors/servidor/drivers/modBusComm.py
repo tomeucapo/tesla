@@ -24,9 +24,9 @@ E_NOT_OPEN_COMM = 5
 
 READ_WORDS  = 3
 READ_E_WORDS = 4
+WRITE_WORDS = 16
 WRITE_WORD  = 6
 DIAG_EXCHNG = 8
-WRITE_WORDS = 16
 REPOR_SLAVE = 17
 IDENT_DSP   = 43
 
@@ -45,6 +45,9 @@ msgCmdError = ["Funcio invalida",
                "L'esclau no ha acceptat la peticio",
                "Error de paritat de memoria"]
 
+class codeFuncNotValid(Exception):
+      pass
+
 class modBusComm:
     def __init__(self, addrSlave, dsp):
         self.id = addrSlave
@@ -59,27 +62,34 @@ class modBusComm:
 
     # Metode que envia una trama en format ModBUS RTU
 
-    def enviar(self, op, addr, size):
+    def enviar(self, op, addr, size, data=None):
         retval = True
-        sndtxt = ""
+
+        if op not in [READ_E_WORDS, READ_WORDS, WRITE_WORDS, REPOR_SLAVE]:
+           raise codeFuncNotValid("Code function not valid")
 
         if not self.serie.isOpen():
            self.lastError = E_NOT_OPEN_COMM
            return False
         
-        # Si hem especificat una @ d'un registre, hem d'especifcar l'amplada
-        # del mateix.
-        
-        if addr>0: 
-            sndtxt  = chr(self.adrecaEsclau)
-            sndtxt += chr(op)
-            sndtxt += chr((addr - 1) >> 8)
-            sndtxt += chr((addr - 1) & 0xff)
-            sndtxt += chr(size >> 8)
-            sndtxt += chr(size & 0xff) 
-            self.lastSize = size
-        else:
-            sndtxt = chr(self.adrecaEsclau)+chr(op)
+        self.lastSize = size
+       
+        # @ del esclau i l'operacio 
+
+        sndtxt = chr(self.adrecaEsclau)+chr(op) 
+
+        # Depenent del tipus d'operacio que tinguem la trama te una forma o un altre
+
+        if op in [READ_E_WORDS, READ_WORDS, WRITE_WORDS]:        
+           sndtxt += chr((addr - 1) >> 8)
+           sndtxt += chr((addr - 1) & 0xff)
+           sndtxt += chr(size >> 8)
+           sndtxt += chr(size & 0xff) 
+
+        if op == WRITE_WORDS and data:
+           sndtxt += chr(len(data)%256)
+           for byte in data:
+               sndtxt += chr(byte)
             
         # Calculam el CRC de la trama construida
         
