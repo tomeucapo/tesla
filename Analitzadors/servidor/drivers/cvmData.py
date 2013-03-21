@@ -66,7 +66,10 @@ class cvmData:
                  break
 
               dades = [ float(chunk)*float(params["valEscala"]) if chunk else 0.0 for chunk in self.__chunks__(var) ]
-              self.darreraLectura[var].append(dades)
+              if var not in self.darreraLectura.keys():
+                 self.darreraLectura[var] = [dades]
+              else:   
+                 self.darreraLectura[var].append(dades)
               self.lectura[var] = dades
 
           if rebut:
