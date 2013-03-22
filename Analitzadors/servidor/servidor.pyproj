@@ -35,8 +35,10 @@
     <Compile Include="drivers\cvmData.py" />
     <Compile Include="drivers\modBusComm.py" />
     <Compile Include="drivers\params\cvmCmds.py" />
+    <Compile Include="drivers\params\das8000Regs.py" />
     <Compile Include="drivers\params\pmRegs.py" />
     <Compile Include="drivers\params\__init__.py" />
+    <Compile Include="drivers\das8000.py" />
     <Compile Include="drivers\pmData.py" />
     <Compile Include="drivers\__init__.py" />
     <Compile Include="export\clientRest.py" />

@@ -66,8 +66,11 @@ class dataExport(threading.Thread):
           self.logger.info("Move %d samples to bulk store ..." % self.queuePending.qsize())
           while self.queuePending.qsize() > int(self.queuePending.maxsize/2):
                 (timeS, expP, data) = self.queuePending.get()
-                self.pendingSamples.append((time.mktime(timeS), expP.__class__.__name__, pickle.dumps(data, pickle.HIGHEST_PROTOCOL)))
+                self.pendingSamples.append((time.mktime(timeS), expP.__class__.__name__, pickle.dumps(data).encode('hex')))
                 self.queuePending.task_done()
+
+      # Metode per a gravar un paquet de dades que s'han descartat per errors de transmissio
+      # i ho gravam a la persistencia
 
       def storeBulk(self):
           if len(self.pendingSamples) == 0:
@@ -102,12 +105,16 @@ class dataExport(threading.Thread):
               
               for (timeS, moduleName, data) in cur:
                   module = self.lExport.get(str(moduleName))
-                  pendTask = (time.localtime(timeS), module,  pickle.loads(str(data)))
+                  pendTask = (time.localtime(timeS), module,  pickle.loads(str(data).decode('hex')))
                   self.queuePending.put(pendTask)           
                                                                  
               cur.close()
           except Exception, e:
               self.logger.error("Persistence load error: %s" % str(e))
+
+      #
+      # Process que s'encarrega de enviar les tasques pendents i que no s'han enviats per algun motiu
+      #
 
       def sendPending(self):
           self.logger.info("Starting pending processor sender ...")    
@@ -118,6 +125,8 @@ class dataExport(threading.Thread):
           except lite.DatabaseError, e:
                 self.logger.fatal(str(e))
                 return
+
+          # Carregam de la persistencia les dades que hi pugi haver pasades per enviar-les
 
           self.loadBulk()                                                                                                        
 

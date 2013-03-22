@@ -4,8 +4,7 @@
 import win32service, win32serviceutil, win32api, win32con, win32event, win32evtlogutil
 import os, sys, logging, logging.handlers
 import ConfigParser
-import servicemanager      
-
+     
 from lectorSrv import *
 
 LEVELS = {'debug':    logging.DEBUG,

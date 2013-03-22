@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ##########################################################################
 #
-# pmData.py
+# das8000.py
 # Classe que s'encarrega de realitzar consultes i tractar les dades
 # d'analitzadors PMxxx del fabricant Schneider-Electric.
 #
@@ -10,9 +10,9 @@
 #
 
 import pickle, threading, hashlib, os, time
+from params import das8000Regs
 
 from modBusComm import READ_WORDS, REPOR_SLAVE, E_SND_ERROR, E_NOT_OPEN_COMM
-from params import pmRegs
 
 ERROR_MASK = {0x01: "Tensió de fase 1 fora de rang",
               0x02: "Tensió de fase 2 fora de rang",
@@ -22,12 +22,12 @@ ERROR_MASK = {0x01: "Tensió de fase 1 fora de rang",
               0x10: "Intensitat de fase 3 fora de rang",
               0x20: "Freqüència fora de rang o tensió fase 1 insuficient per determinar la freqüencia",}
 
-class pmData:
-    def __init__(self, pmComm, vars, model):
-        self.id = pmComm.id
+class das8000:
+    def __init__(self, devComm, vars, model):
+        self.id = devComm.id
         self.idStr = ''
-        self.pmComm = pmComm
-        self.mutex = pmComm.mutex
+        self.devComm = devComm
+        self.mutex = devComm.mutex
         self.variables = vars
         self.logger = None
         self.rangs = {}
@@ -43,10 +43,10 @@ class pmData:
         
         self.lastStatus = {}
         self.lastStatus["lastTime"] = 0
-        if model in pmRegs.tRegs.keys():
-            self.regsQuery = pmRegs.tRegs[model]
+        if model in das8000Regs.tRegs.keys():
+            self.regsQuery = das8000Regs.tRegs[model]
         else:
-            raise KeyError, "Aquest model de PM no esta soportat!"
+            raise KeyError, "Aquest model de dispositiu no esta soportat!"
             return 
 
         self.resetValues()
@@ -74,25 +74,25 @@ class pmData:
             #self.logger.debug("  %s:  %s" % (var, params["registre"]))
                     
             self.mutex.acquire()
-            if not self.pmComm.enviar(READ_WORDS, params["registre"], params["numRegs"]):
+            if not self.devComm.enviar(READ_WORDS, params["registre"], params["numRegs"]):
                self.mutex.release()
-               if self.pmComm.lastError in [E_NOT_OPEN_COMM, E_SND_ERROR]:
+               if self.devComm.lastError in [E_NOT_OPEN_COMM, E_SND_ERROR]:
                   self.logger.error("Error enviant, reiniciarem connexio del dispositiu") 
-                  self.pmComm.resetConnection()                
+                  self.devComm.resetConnection()                
                break
             
-            rebut = self.pmComm.rebre()
+            rebut = self.devComm.rebre()
             self.mutex.release()
  
             if not rebut:
-               self.lastError = self.pmComm.msgError()
+               self.lastError = self.devComm.msgError()
                self.logger.error(self.lastError)
                break
  
             # Agafam el valor de la lectura fet, si es un valor gran (compost)
             # llegim el darrer gran valor, si no agafam la llista de resultats simples
  
-            vLectura = [self.pmComm.lastBigIntValue] if params["compost"] else self.pmComm.lastResponse
+            vLectura = [self.devComm.lastBigIntValue] if params["compost"] else self.devComm.lastResponse
 
             # Agafam el factor d'escala el qual emprarem per calcular el valor de la lectura real
  
@@ -118,21 +118,21 @@ class pmData:
     
     def identify(self):
         self.mutex.acquire()        
-        if not self.pmComm.enviar(REPOR_SLAVE, 0, 0):
+        if not self.devComm.enviar(REPOR_SLAVE, 0, 0):
            self.mutex.release()
-           if self.pmComm.lastError in [E_NOT_OPEN_COMM, E_SND_ERROR]:
-              self.pmComm.resetConnection()              
+           if self.devComm.lastError in [E_NOT_OPEN_COMM, E_SND_ERROR]:
+              self.devComm.resetConnection()              
               self.logger.error("Error enviant, reiniciarem connexio del dispositiu")               
            return ''
-        rebut = self.pmComm.rebre()
+        rebut = self.devComm.rebre()
         self.mutex.release()
 
         if not rebut:
-           self.lastError = self.pmComm.msgError()
-           self.logger.error("%d: %s " % (self.pmComm.lastError, self.pmComm.msgError()))
+           self.lastError = self.devComm.msgError()
+           self.logger.error("%d: %s " % (self.devComm.lastError, self.devComm.msgError()))
            return ''
        
-        return self.pmComm.lastResponseB[2:]
+        return self.devComm.lastResponseB[2:]
 
     def getConfig(self):
         self.logger.debug("Demanant configuracio i estat ... %d" % self.id)
@@ -150,9 +150,9 @@ class pmData:
         if not retval:
            return ''
         
-        self.status()               # Determinal l'estat de l'analitzador
-        self.__getSerial__()        # Agafam el número de série i la versió del sistema operatiu
-        self.loadRanges()           # Carrega els registres d'escala del propi analitzador
+        #self.status()               # Determinal l'estat de l'analitzador
+        #self.__getSerial__()        # Agafam el número de série i la versió del sistema operatiu
+        #self.loadRanges()           # Carrega els registres d'escala del propi analitzador
         
         self.logger.debug("\tGuardant configuracio del dispositiu a la cache...")
         fConfDrv = open(self.fileNameCache,"wb")
@@ -169,18 +169,18 @@ class pmData:
                 raise KeyError, "Aquest driver de %s no te configurat el parametre %s" % (self.model, statVar)
                 
             self.mutex.acquire()
-            if not self.pmComm.enviar(READ_WORDS, params["registre"], params["numRegs"]):
+            if not self.devComm.enviar(READ_WORDS, params["registre"], params["numRegs"]):
                self.mutex.release()
-               if self.pmComm.lastError in [E_NOT_OPEN_COMM, E_SND_ERROR]:
+               if self.devComm.lastError in [E_NOT_OPEN_COMM, E_SND_ERROR]:
                   self.logger.error("Error enviant, reiniciarem connexio del dispositiu") 
-                  self.pmComm.resetConnection()                
+                  self.devComm.resetConnection()                
                continue
        
-            rebut = self.pmComm.rebre()
+            rebut = self.devComm.rebre()
             self.mutex.release()            
 
             if rebut:
-               self.lastStatus[statVar] = self.pmComm.lastBigIntValue if params["compost"] else self.pmComm.lastResponse                           
+               self.lastStatus[statVar] = self.devComm.lastBigIntValue if params["compost"] else self.devComm.lastResponse                           
                self.lastStatus["lastTime"] = time.time()
 
     def status(self):
