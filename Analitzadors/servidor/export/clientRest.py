@@ -41,11 +41,14 @@ class clientRest:
              self.lastResponse = f.read()
           except urllib2.HTTPError, e:
              dataR = e.read().split('#')
-             strError = str(dataR[1]) if len(dataR) > 0 else str(e)
+	     strError = str(e)
+	     if len(dataR) > 1:
+             	strError = str(dataR[1])
+
              if e.code == 409:
                 raise ClientDuplicateEntry, "Registre ja existent: %s" % strError
 
-            # Patch for Python 2.5.2 support
+             # Patch for Python 2.5.2 support
              if e.code != 201:
                 raise ClientError, "Error enviant lectura: %d: %s" % (e.code, strError)
           except urllib2.URLError, e:

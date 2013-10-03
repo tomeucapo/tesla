@@ -25,6 +25,7 @@ def loadExporter(classname):
 class dataExport(threading.Thread):
       def __init__(self, qOut, dExports, equip, nodeConf):
           self.queueOut = qOut
+          self.mutexQueue = threading.Semaphore()
           self.queuePending = Queue.Queue(MAX_QUEUE_SIZE)
           self.logger = logging.getLogger('lector.dataexport')
 
@@ -105,9 +106,22 @@ class dataExport(threading.Thread):
               
               for (timeS, moduleName, data) in cur:
                   module = self.lExport.get(str(moduleName))
-                  pendTask = (time.localtime(timeS), module,  pickle.loads(str(data).decode('hex')))
-                  self.queuePending.put(pendTask)           
-                                                                 
+                  mitjaDades = pickle.loads(str(data).decode('hex'))
+                  timet = time.localtime(timeS)
+
+	          self.logger.info("Storing sample pending to send: %s ..." % time.strftime("%d/%m/%Y %H:%M:%S", timet))
+                  try:
+                      module.save(timet, mitjaDades)                         
+                      self.deleteFromBulk(module.__class__.__name__, timet)
+                  except ClientDuplicateEntry, e:
+                      self.logger.warn(str(e))
+                  except Exception, e:
+                      self.logger.error("Pluggin %s error: %s" % (module.__class__.__name__, str(e)))
+                      if self.queuePending.qsize() < MAX_QUEUE_SIZE/2:
+		         self.queuePending.put((timet, module, mitjaDades))
+            
+              self.logger.info("Loaded %d records from persistence ..." % cur.rowcount)
+                                       
               cur.close()
           except Exception, e:
               self.logger.error("Persistence load error: %s" % str(e))
