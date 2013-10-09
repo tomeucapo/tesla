@@ -4,28 +4,37 @@
   <input type="hidden" id="analizerAddr" name="analizerAddr" />
  
 <div class="caixa">
-      <div>
-	<label for="Node">Node:</label>
-	<input style="position: relative;" type="text" id="node" name="node" value="" size="20" />
-	<div id="nodesContainer"></div>	
+      <div class="caixaNodeAnalitzador">
+	<div>	
+	    <label for="Node">Node:</label>
+	    <input style="position: relative;" type="text" id="node" name="node" value="" size="20" />
+	    <div id="nodesContainer"></div>	
+	</div>
+	<div>
+	    <label for="Analitzador">Analitzador:</label>
+	    <input style="position: relative;" type="text" id="analizer" name="analizer" value="" size="20" />
+	    <div id="analizersContainer"></div>
+	</div>
       </div>
-      <div>
-	<label for="Analitzador">Analitzador:</label>
-	<input style="position: relative;" type="text" id="analizer" name="analizer" value="" size="20" />
-      	<div id="analizersContainer"></div>
-      </div>
-
+      
+      <div class="caixaFiltres">
       {% if historial %}
 	      <label for="dateFrom">Desde: </label><input type="text" id="dateFrom" name="dateFrom" value="{{ dataInici }}" size="9" />
 	      <label for="dateTo">Fins: </label><input type="text" id="dateTo" name="dateTo" value="{{ dataFi }}"  size="9" />
+	      <br>
 	      {% if lectures %}
-		  <label for="variable">Variable: </label><input type="text" id="varC" name="varC" value="{{ var }}"  size="3" />
+		  <label for="variable">Variable: </label><select id="selectVars" style="width: 160px;"></select><br><br>
 		  <label for="grafica">Grafica: </label><input type="checkbox" id="chartC" name="chartC" />
-	      {% endif %}
-      <button type="button" id="search" title="Consultar historic">Consultar</button> 
+	      {% else %}
+		   <br><br><br>
+	      {% endif %} 
+	      <button type="button" id="search" title="Consultar historic">Consultar</button> 
       {% else %}
+	      <select id="selectVariable" name="selectVariable" multiple="multiple" size="8" style="width: 20em"></select>
+	      <br>
 	      <label for="realtime">RT: </label><input type="checkbox" id="rtC" name="rtC" />
               <span id="lastRead"></span>
 	      <span id="statusRead"></span>
       {% endif %}
+      </div>
 </div>   

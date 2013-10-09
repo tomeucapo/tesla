@@ -3,10 +3,10 @@
 <body class="yui-skin-sam">
   
   {% include "menuHead.html" %}
-
   {% include "filterHead.html" %}
   
-  <div id="resultats" style="float: left; display:inline;"></div> 
+  <div id="resultats" style="float: left; display:inline;"></div>
+  <div id="grafica" style="float: right; display:inline; width: 700px; height: 500px; margin: 0 auto"></div>
 
   <script type="text/javascript">  
   YAHOO.util.Event.addListener(window, "load", function() {
@@ -83,7 +83,7 @@
         };
 
         var histDataTable = new YAHOO.widget.DataTable("resultats", histColumnDefs, histDataSource, 
-                                                       {scrollable: true, height:"430px", width: "750px"});
+                                                       {scrollable: true, height:"430px", width: "660px"});
                                                             
         histDataTable.subscribe("rowMouseoverEvent", histDataTable.onEventHighlightRow); 
 	histDataTable.subscribe("rowMouseoutEvent", histDataTable.onEventUnhighlightRow); 

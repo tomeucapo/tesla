@@ -23,10 +23,7 @@
    <script type="text/javascript" src="/static/js/yui/build/dragdrop/dragdrop-min.js"></script>
    <script type="text/javascript" src="/static/js/yui/build/autocomplete/autocomplete-min.js"></script>
 
-   <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-   <script type="text/javascript" src="/static/js/highcharts/js/highcharts.js"></script>
-   <script type="text/javascript" src="/static/js/highcharts/js/modules/exporting.js"></script>
-   <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+   <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 
    <script type="text/javascript">
      function initLoadingWindow()
@@ -49,6 +46,43 @@
         YAHOO.loading.container.wait.render(document.body);   
      }
     
+    
+  function fillSelectVars(o)
+  {
+	   dataDefs = YAHOO.lang.JSON.parse(o.responseText);
+	   selectVar =  YAHOO.util.Dom.get("selectVars");
+	   
+	   selectVar.innerHTML="";
+	   for (varName in dataDefs)
+	   {
+		var newOption = document.createElement('option');
+		newOption.value = varName;
+		newOption.innerHTML = varName+": "+dataDefs[varName];
+		selectVar.appendChild(newOption);
+	   }
+  }
+  
+  function errorRead(o)
+  {
+         alert("Error "+o.status+" : "+o.statusText);
+  }
+  
+  function loadAnalizerVars(analizerId)
+  {
+	  var conn = YAHOO.util.Connect;
+	
+	  if (!analizerId)
+	      alert("No s'ha especificat cap analitzador");
+	  
+          conn.setDefaultPostHeader(false);
+          conn.initHeader("Content-Type", "application/json; charset=utf-8");
+          conn.asyncRequest("GET","/parametres/"+analizerId,
+                                           {
+                                              success: fillSelectVars,
+                                              failure: errorRead
+                                           });        	   
+  }
+     
      function initSearchFields()
      {
         var Dom = YAHOO.util.Dom;
@@ -105,8 +139,12 @@
 		Dom.get("analizerId").value = oData.id;
 		
 	       {% if not historial and not lectures %}
-	       Dom.get("analizerAddr").value = oData.addr;
-	       loadAnalizerDefs();
+	          Dom.get("analizerAddr").value = oData.addr;
+	          loadAnalizerDefs();
+	       {% endif %}
+	       
+	       {% if lectures %}
+	          loadAnalizerVars(oData.id);
 	       {% endif %}
 	});
 	

@@ -1,0 +1,195 @@
+BODY { 
+  color: #d0ffd0; 
+  background: #333333;
+  font-family: Bitstream Charter, sans-serif;
+  font-size: 14pt; 
+  margin-top: 4%; 
+  margin-left: 8%;
+  margin-right: 8% 
+}
+ 
+H1  { color: #d0ffd0; }
+H2  { color: #d0ffd0;
+      margin: 2px 2px 2px 2px; }
+
+#subtitol {
+      font-size: 12px;
+      font-style:italic;
+}
+
+A,A:visited { color: #d0ffd0; 
+              background: #333333;
+              text-decoration: none }
+ 
+A:hover  { color: #333333; 
+           background: #d0ffd0; 
+           text-decoration: none }
+
+.camp { 
+     border: 1px solid gray;
+     margin: 5px 5px 5px 5px;
+     background-color: #cccccc; 
+     color: #000033;     
+     padding: 20px;
+     width: 500px
+}
+
+.comentari { 
+     border: 1px solid gray;
+     margin: 20px 20px 20px 20px;
+     font-size: 10pt;
+     color: #d0ffd0;     
+     padding: 20px;
+     width: 500px;
+     word-wrap: normal
+}
+
+#DiscussPhoto .comment-block {
+  margin-left:64px;
+  min-height:63px;
+  position:relative;
+  vertical-align:top;
+}
+
+.errorCamp {
+     display: inline;
+     font-size: 12px;
+     color: red; 
+}
+
+#breadcrumbs
+{
+  color: rgb(220,80,80);
+  background-color: transparent;
+  margin: 5px 5px 5px 5px;
+  padding: 0 1px 2px 1px;
+}
+
+#large-image-box
+{
+  display: block;
+  background-color:#545454;
+  width:680px;
+  min-width: 680px;
+  max-height: 800px;
+  margin-bottom:10px;
+  margin-left:15px;
+  text-align:center;
+  padding-bottom:10px;
+  padding-top:5px;
+ /* overflow: hidden;  
+  float: left; */
+  border: 1px solid black;
+}
+
+#large-image-box img
+{
+  display:block;
+  margin-left:auto;
+  margin-right:auto;
+  margin-bottom:10px;
+  height: auto;
+  width: auto;
+  border: none;
+  background: black;
+}
+#large-image-box div
+{
+  display:block;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  width:640px;
+  background-color:#545454;
+  padding: 2px;
+}
+
+#large-image-box div p
+{
+  text-align: center;
+  }
+
+#thumbnail-box
+{
+  width:800px;
+  min-width: 600px;
+/*  float:left; */
+}
+#thumbnails {
+    list-style-type: none;
+    margin:0;
+    padding:0;
+/*    float:left; */
+}
+#thumbnails li {
+    margin:0;
+    padding:0;
+    float:left;
+}
+
+#imageboxes-break
+{
+  clear: left;
+  }
+
+div.small-image-box
+{
+  background: #545454;
+  color: #333333;
+  width:220px;
+  max-height: 200px;
+  min-height: 200px;
+  margin-bottom: 10px;
+  margin-left:15px;
+  text-align:center;
+  padding-bottom:5px;
+  padding-top:5px;
+  overflow: hidden;
+  float: left;
+  border: 1px solid black;
+}
+
+div.small-image-box img
+{
+  margin-bottom:5px;
+  display:block;
+  margin-left:auto;
+  margin-right:auto;
+  margin-bottom: 4px;
+/*  max-height: 100px;
+  min-height: 100px;
+  max-width: 150px;*/
+  
+  border: 0;
+  }
+
+
+div.small-image-box span
+{
+  height:20px;
+  max-height: 20px;
+  min-height: 20px;
+  width:160px;
+  min-width: 160px;
+  max-width: 160px;
+  background: #545454;
+  color: #333333;
+  display:block;
+  font-size: 10px;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:center;
+  overflow: visible; 
+  margin-top: 0;
+  margin-bottom:0;
+  padding-top: 0;
+  padding-bottom:0;
+}
+
+
+/* #### Django calendar stuff #### */
+.calendarbox { background-color: white;  }
+.calendarnav-previous { position: absolute; left: 0;  }
+.calendarnav-next { position: absolute; right: 0; }
+.calendar-cancel { text-align: center; }
+span a img { border: none; }

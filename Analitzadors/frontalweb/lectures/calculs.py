@@ -66,33 +66,45 @@ def costsTarifes(request, dataInici, dataFi, nodeAnalitzadorId):
        retval.status_code = 404
        retval.write("Ho ni ha lectures de la variable (%s) en les dates compreses!" % parTarifa.descripcio)
        return retval
-    
-    lTarifes = []    
+
+    lTarifes = {}   
     for l in lectures:
         horaLectura = l.lectura.dataHora.time()
         dataLectura = l.lectura.dataHora.date()
         
         franjaLectura = franjes.filter(tarifa__dataInici__lte=dataLectura).filter(tarifa__dataFi__gte=dataLectura)
         franja = franjaLectura.filter(horaInici__lte=horaLectura).filter(horaFi__gte=horaLectura)        
-    
+
+        if not franja:
+           retval.status_code = 404
+           retval.write("Ho ni franjes horaries configurades per aquest analitzador en eaquestes hores")
+           return retval
+        
         nomTarifa = franja[0].nom
         preuTarifa = franja[0].preu
         horesTarifa = franja[0].hores
-        
-        if nomTarifa not in lTarifes:
-           lTarifes.append(nomTarifa)
-        
+
+        if nomTarifa not in lTarifes.keys():
+           lTarifes[nomTarifa] = horesTarifa  
+        else:
+           lTarifes[nomTarifa] += horesTarifa
+
         if dataLectura not in potFranjes.keys():
            potFranjes[dataLectura] = {}
 
-        if nomTarifa not in potFranjes[dataLectura].keys():
+        liniaDia = potFranjes[dataLectura]
+        if nomTarifa not in liniaDia.keys():
            potFranjes[dataLectura][nomTarifa] = {"total": l.valor, "preu": preuTarifa, "lectures": 1, "horesTarifa": horesTarifa}
         else:
-           potFranjes[dataLectura][nomTarifa]["total"] += l.valor
-           potFranjes[dataLectura][nomTarifa]["lectures"] += 1 
-   
-    resultat = {"ResultSet": {"Linies": [], "Tarifes": lTarifes, }}
-    
+           liniaDia[nomTarifa]["horesTarifa"] += horesTarifa
+           liniaDia[nomTarifa]["total"] += l.valor
+           liniaDia[nomTarifa]["lectures"] += 1 
+  
+        
+
+    resultat = {"ResultSet": {"Linies": [], }}
+    print lTarifes
+ 
     for dataLectura, tarifa in potFranjes.iteritems():
         linia = {"data": dataLectura.strftime("%d-%m-%Y"), "consumTotal": 0}
         consumTotal = 0

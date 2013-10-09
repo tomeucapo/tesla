@@ -20,19 +20,22 @@ def inici(request):
     
     return render_to_response("main.html", data,context_instance=RequestContext(request))
 
-
 def realTime(request):
     data = {"method": request.method,
             "lectures": False,
             "historial": False }
 
     return render_to_response("rt.html", data,context_instance=RequestContext(request))
-
-      
-def listNodes(request, sQuery):
+ 
+def listNodes(request, sQuery=None):
     nodes = []
-    #print request
-    for node in Node.objects.filter(nom__contains=sQuery):
+     
+    if sQuery:
+       nodesSel = Node.objects.filter(nom__contains=sQuery)
+    else:
+       nodesSel = Node.objects.all()
+
+    for node in nodesSel:
         nodes.append( {"id": node.id, "nom": node.nom, "host": node.host, "ubicacio": node.ubicacio})
     
     result = { "ResultSet": {"Nodes": nodes, }}
@@ -61,3 +64,20 @@ def listAnalizers(request, nodeId):
        
     result = {"ResultSet": {"Analitzadors": analitzadors, }}
     return HttpResponse(json.dumps(result), mimetype='application/json')
+
+def listParametres(request, analizerId):
+    response = HttpResponse()
+    
+    try:
+        nodeAnalitzador = NodeAnalitzador.objects.get(id=analizerId)
+        parametres = Parametre.objects.filter(analitzador=nodeAnalitzador.analitzador.id)
+    except ObjectDoesNotExist, e:
+        response.write("Aquesta configuracio no existeix!")
+        response.status_code = 404
+        return response
+     
+    lParametres = {"ALL": "Totes les variables"}
+    for p in parametres:
+        lParametres[p.nom]= p.descripcio
+
+    return HttpResponse(json.dumps(lParametres), mimetype='application/json')

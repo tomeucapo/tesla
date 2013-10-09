@@ -1,5 +1,5 @@
 
-import time, logging, logging.handlers
+import time, logging, logging.handlers, logging.config
 from datetime import datetime, date, time
 import pickle, json
 
@@ -11,7 +11,7 @@ from piston.utils import rc
 from lectures.models import Node, Analitzador, Lectura, LecturaParametre, Parametre, NodeAnalitzador
 from api.client import ctrlLector 
 
-logging.config.fileConfig("/home/tomeu/devel/gestioEnergetica/logging.conf")
+logging.config.fileConfig("/etc/entorns/config/gestioEnergetica/logging.conf")
 
 class HistoryHandler(BaseHandler):
    allowed_methods = ('GET','POST',)
@@ -151,7 +151,7 @@ class LectorHandler(BaseHandler):
           retval.write("No ha especificat la operacio!")
           return retval
 
-       try: 
+       try:
           node = Node.objects.get(id=nodeId)
           cliLector = ctrlLector((node.host,50007))
           retval = getattr(cliLector, "get"+operation)(analitzadorId)
@@ -162,6 +162,6 @@ class LectorHandler(BaseHandler):
        except Exception, e:
           retval = rc.BAD_REQUEST
           retval.write(str(e))
-       
+
        return retval
 

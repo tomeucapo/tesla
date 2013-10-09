@@ -8,15 +8,17 @@
   {% include "filterHead.html" %}
   
   <div id="resultats" style="float: left; display:inline;"></div> 
-  <div id="grafica" style="float: right; display:inline; min-width: 600px; height: 400px; margin: 0 auto"></div>
- 
-  <script type="text/javascript"> 
+  <div id="grafica" style="float: right; display:inline; width: 700px; height: 500px; margin: 0 auto"></div>
+  
+  <script type="text/javascript">
+  google.load('visualization', '1', {packages:['corechart']});
   YAHOO.util.Event.addListener(window, "load", function() {
         var Event = YAHOO.util.Event,
             Dom = YAHOO.util.Dom;
 
         initLoadingWindow();
         initSearchFields();
+	
         var histColumnDefs = [
             {key:"variable", label: "Variable", sortable: true },
             {key:"dataHora", label:"Data/Hora", sortable:true},
@@ -59,102 +61,54 @@
         };
 
         var histDataTable = new YAHOO.widget.DataTable("resultats", histColumnDefs, histDataSource, 
-                                                       {scrollable: true, height:"430px", width: "750px"});
+                                                       {scrollable: true, height:"430px", width: "550px"});
                                                             
         histDataTable.subscribe("rowMouseoverEvent", histDataTable.onEventHighlightRow); 
 	histDataTable.subscribe("rowMouseoutEvent", histDataTable.onEventUnhighlightRow); 
         histDataTable.subscribe("rowClickEvent", histDataTable.onEventSelectRow);
 
-        function getDataSeries(data)
-        {
-                 var dInici = new Date(data[0].dataHora);
-                
-                 var seriesData=[{
-                      type: 'area',
-                      name: data[0].variable,
-                      pointInterval: 900000,
-                      pointStart: Date.UTC(dInici.getFullYear(), dInici.getMonth(), dInici.getDate(), dInici.getHours(), dInici.getMinutes()),
-                      data: []
-                   }];
+	function prepareData(data)
+	{
+	         var titols = [ 'Data/Hora' ], compost = false;
+	         if ( typeof data[0].valor == 'object' )
+		 {
+		       for (var i = 0; i < data[0].valor.length; i++)
+		           titols.push(data[0].variable+"."+i);
+		       compost = true;
+		 } else titols.push(data[0].variable);
+		 
+	         var listData = [ titols ];
+		 for (var i = 0; i < data.length; i++)
+		 {
+                     dataLine = [data[i].dataHora]
+		     if ( compost )
+		     {
+		          for (var j = 0; j < data[i].valor.length; j++)
+		              dataLine.push(data[i].valor[j]);
+		     } else dataLine.push(data[i].valor);
+		     
+	             listData.push(dataLine);
+		 }
 
-                 var graphData = seriesData[0].data;
-                 for(i=0;i<data.length;i++)
-                    graphData.push(data[i].valor);
-
-                 return(seriesData); 
-        }
-
-      
+                 return google.visualization.arrayToDataTable(listData);	  
+	}
+	
+	function drawChart(dataChart)
+	{
+		 if (dataChart.length==0)
+		    return;
+		  
+	 	 var chart = new google.visualization.LineChart(document.getElementById('grafica'));
+	         chart.draw(prepareData(dataChart), { title: 'Grafica de '+dataChart[0].variable, vAxis: { title: dataChart[0].unitats } });
+	}
+	
         Event.on(Dom.get("search"), "click", function() {   
               var mySuccessHandler = function() {
-                  this.onDataReturnInitializeTable.apply(this,arguments);
-                  dataChart = arguments[1].results;
-                  if (Dom.get("chartC").checked)
-                      chart = new Highcharts.Chart({
-                          chart: {
-                                  renderTo: 'grafica',
-                                  zoomType: 'x',
-                                  spacingRight: 20
-                          },
-                          title: {
-                                  text: 'Grafica de '+dataChart[0].variable
-                          },
-                          subtitle: {
-                                  text: document.ontouchstart === undefined ?
-                                        'Click and drag in the plot area to zoom in' :
-                                        'Drag your finger over the plot to zoom in'
-                          },
-                          xAxis: {
-                                  type: 'datetime',
-                                  maxZoom: 900000, // fourteen days
-                                  title: {
-                                       text: null
-                                  }
-                          },
-                          yAxis: {
-                                  title: {
-                                        text: dataChart[0].unitats
-                                  },
-                                  min: 0,
-                                  startOnTick: true, 
-                                  showFirstLabel: true
-                          },
-                          tooltip: {
-                                  shared: true
-                          },
-                          legend: {
-                                  enabled: false
-                          },
-                          plotOptions: {
-                                  area: {
-                                       fillColor: {
-                                               linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1},
-                                               stops: [
-                                                       [0, Highcharts.getOptions().colors[0]],
-                                                       [1, 'rgba(2,0,0,0)']
-                                                      ]
-                                       },
-                                       lineWidth: 1,
-                                       marker: {
-                                            enabled: false,
-                                            states: {
-                                               hover: {
-                                                  enabled: true,
-                                                  radius: 5
-                                               }      
-                                            }
-                                       },
-                                       shadow: false,
-                                       states: {
-                                            hover: {
-                                               lineWidth: 1
-                                            }
-                                       }
-                                  }
-                          },
-                          series: getDataSeries(dataChart)
-                      }); 
-
+		  this.onDataReturnInitializeTable.apply(this,arguments);
+                  
+		  if (Dom.get("chartC").checked && selectVars.value != "ALL")
+		     drawChart(arguments[1].results);
+		  
                   YAHOO.loading.container.wait.hide();
               };
               
@@ -180,7 +134,7 @@
               if (dataInici.value.match("^[0-9]{1,2}\-[0-9]{1,2}\-[0-9]{4}") && dataFi.value.match("^[0-9]{1,2}\-[0-9]{1,2}\-[0-9]{4}"))  
               {
                   YAHOO.loading.container.wait.show();
-                  histDataSource.sendRequest(analizer.value+"/"+variable.value+"/"+dataInici.value+"/"+dataFi.value, oCallback);   
+                  histDataSource.sendRequest(analizer.value+"/"+selectVars.value+"/"+dataInici.value+"/"+dataFi.value, oCallback);   
               } else
                  alert("El format de les dates es incorrecte!");
         });

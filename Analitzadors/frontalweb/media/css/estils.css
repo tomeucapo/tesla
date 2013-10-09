@@ -1,0 +1,75 @@
+    BODY { 
+      color: black; 
+      background: white;
+      font-family: Bitstream Charter, sans-serif;
+      font-size: 14pt; 
+      margin-top: 4%; 
+      margin-left: 3%;
+      margin-right: 3% 
+    } 
+
+    A,A:visited { color: black; 
+              background: inherit;
+              text-decoration: none }
+ 
+    A:hover  { color: white; 
+           background: blue; 
+           text-decoration: none }
+
+    /* Clear calendar's float, using dialog inbuilt form element */
+    #container .bd form {
+        clear:left;
+    }
+ 
+    /* Have calendar squeeze upto bd bounding box */
+    #container .bd {
+        padding:0;
+    }
+ 
+    #container .hd {
+        text-align:left;
+    }
+ 
+    /* Center buttons in the footer */
+    #container .ft .button-group {
+        text-align:center;
+    }
+ 
+    /* Prevent border-collapse:collapse from bleeding through in IE6, IE7 */
+    #container_c.yui-overlay-hidden table {
+        *display:none;
+    }
+ 
+    /* Remove calendar's border and set padding in ems instead of px, so we can specify an width in ems for the container */
+    #cal {
+        border:none;
+        padding:1em;
+    }
+ 
+  
+ 
+    /* Example box */
+    .box {
+        position:relative;
+        height:5em;
+    }
+    
+    .caixaNodeAnalitzador {
+        float: left; display:inline;
+        background-color:#eee;
+        padding:5px;       
+        width: 350px; 
+    }
+
+    .caixaFiltres {
+        float: rigth; display:inline;
+        background-color:#eee;
+        padding:5px; 
+    }
+    
+    .caixa {
+        border:1px solid black;
+        background-color:#eee;
+        padding:5px;       
+        width: 650px; 
+    }
