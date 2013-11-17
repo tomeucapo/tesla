@@ -230,18 +230,22 @@ class Visor(QtGui.QMainWindow):
         if colum != 2:
            return
         
-        if widgetItem.checkState(colum) == Qt.Checked:
-           print self.cliThr.values[1]['vars']
-           finVisor = finestraVisor(descVar, self.cliThr.values[1]['vars'][nomVar])
-           finVisor.setAttribute(Qt.WA_DeleteOnClose | Qt.WA_LayoutOnEntireRect)
-           finVisor.setWindowFlags(Qt.SubWindow)
-           self.ui.zonaDisplays.addSubWindow(finVisor)
-           finVisor.show()
-           self.visors[nomVar] = finVisor
-        elif widgetItem.checkState(colum) == Qt.Unchecked:
-              self.visors[nomVar].close()
-              self.visors.pop(nomVar)
-
+	try:
+       	   if widgetItem.checkState(colum) == Qt.Checked:
+           	finVisor = finestraVisor(descVar, self.cliThr.values[1]['vars'][nomVar])
+           	finVisor.setAttribute(Qt.WA_DeleteOnClose | Qt.WA_LayoutOnEntireRect)
+           	finVisor.setWindowFlags(Qt.SubWindow)
+           	self.ui.zonaDisplays.addSubWindow(finVisor)
+           	finVisor.show()
+           	self.visors[nomVar] = finVisor
+           elif widgetItem.checkState(colum) == Qt.Unchecked:
+                self.visors[nomVar].close()
+                self.visors.pop(nomVar)
+        except KeyError, e:
+	   QtGui.QMessageBox.warning(self,self.tr("Avis"), "No hi ha dades per visualitzar: %s" % str(e))
+   	   QtCore.qDebug(str(e))
+	   widgetItem.setCheckState(colum, Qt.Unchecked)
+		
     def buidaTot(self):
         QtCore.qDebug("Buidant tot...")
         for varName, visor  in self.visors.iteritems():
