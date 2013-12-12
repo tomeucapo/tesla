@@ -68,8 +68,6 @@ class clientThread(QThread):
         if tl > 0 and len(equips.keys()) > 0:
            self.tempsRefresc = int(tl/len(equips.keys()))/2
 
-        print "Temps de refresc = ",self.tempsRefresc
-
         if self.cliLector.connectat:
            self.ui.statusbar.showMessage("Servidor de lectures actiu ...")
            self.ui.actionConnectar.setEnabled(0)

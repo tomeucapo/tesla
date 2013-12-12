@@ -109,7 +109,7 @@ class dataExport(threading.Thread):
                   mitjaDades = pickle.loads(str(data).decode('hex'))
                   timet = time.localtime(timeS)
 
-	          self.logger.info("Storing sample pending to send: %s ..." % time.strftime("%d/%m/%Y %H:%M:%S", timet))
+                  self.logger.info("Storing sample pending to send: %s ..." % time.strftime("%d/%m/%Y %H:%M:%S", timet))
                   try:
                       module.save(timet, mitjaDades)                         
                       self.deleteFromBulk(module.__class__.__name__, timet)
@@ -118,7 +118,7 @@ class dataExport(threading.Thread):
                   except Exception, e:
                       self.logger.error("Pluggin %s error: %s" % (module.__class__.__name__, str(e)))
                       if self.queuePending.qsize() < MAX_QUEUE_SIZE/2:
-		         self.queuePending.put((timet, module, mitjaDades))
+                         self.queuePending.put((timet, module, mitjaDades))
             
               self.logger.info("Loaded %d records from persistence ..." % cur.rowcount)
                                        

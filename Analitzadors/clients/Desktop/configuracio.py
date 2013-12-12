@@ -2,16 +2,18 @@
 
 from PyQt4 import QtCore, QtGui
 from ui.frmConfiguracioSrv import Ui_configuracio
+from api.client import *
 
 class Configuracio(QtGui.QDialog):
       defaults = {"ipServidor":   "127.0.0.1",
                   "portServidor": 50007, "dirExport": ""}
 
       cliThr = None
-
+      
       def __init__(self):
           QtGui.QDialog.__init__(self)
 
+          self.pucGuardar = False
           self.ui = Ui_configuracio()
           self.ui.setupUi(self)
 
@@ -19,16 +21,55 @@ class Configuracio(QtGui.QDialog):
           if not self.settings.contains("ipServidor"):
              for key in self.defaults.keys():
                   self.settings.setValue(key, QtCore.QVariant(self.defaults[key]))
- 
+          
+          self.connect(self.ui.bProvar, QtCore.SIGNAL("clicked()"), self.onCmdTest)
+          self.ipServer = str(self.settings.value("ipServidor").toString())
+
+      def onCmdTest(self):
+          try:
+             ipServer = str(self.ui.cAddrServidor.displayText())
+             portServer = int(self.settings.value("portServidor").toString())      
+             
+             cliTest = ctrlLector( (ipServer, portServer) )
+             QtGui.QMessageBox.information(self, self.tr("Info clientThread"), u"Connectat correctament al servei Lector %s" % ipServer)
+             self.pucGuardar = True
+          except Exception, err:
+             QtGui.QMessageBox.critical(self,self.tr("Error al connectar"), str(err))
+             self.pucGuardar = False
+             
       def guardar(self):
-          self.settings.setValue("ipServidor", QtCore.QVariant(str(self.ui.cAddrServidor.displayText())))
+          if self.pucGuardar:
+             self.settings.setValue("ipServidor", QtCore.QVariant(str(self.ui.cAddrServidor.displayText())))
+          else:
+             QtGui.QMessageBox.warning(self, self.tr("Alerta"),"No es guardara la direccio del nou servidor per que no funciona")
 
       def carregar(self):
           self.ui.cAddrServidor.setText(self.settings.value("ipServidor").toString())
        
-          if self.cliThr is None:
+          if self.cliThr is None or not self.cliThr.connectat:
              QtGui.QMessageBox.warning(self, self.tr("Alerta"), "No es pot llegir la configuracio del servidor per\nper que no estam connectats!")
              return
+
+          equips = self.cliThr.conf['equips']
+          devices = self.cliThr.conf['devices']
+
+          cfgEquip = {}
+          for idEquip, cnfEquip in equips.iteritems():
+              idDevice = str(cnfEquip['config']['device'])
+              if idDevice not in cfgEquip.keys():
+                 cfgEquip[idDevice] = [cnfEquip]
+              else:
+                 cfgEquip[idDevice].append(cnfEquip)
+
+          for idDevice, cnfDevice in devices.iteritems():              
+              rootDevice = QtGui.QTreeWidgetItem(["%s:%s" % (idDevice, cnfDevice['config']['port']), ""])
+              
+              for equip in cfgEquip[idDevice]:
+                   config = equip['config']['params']
+                   item = QtGui.QTreeWidgetItem(rootDevice, ["%s %s" % (config['fabricant'], config['model']),""])
+              
+              self.ui.treeDevices.insertTopLevelItem(0, rootDevice)
+              self.ui.treeDevices.expandAll()
 
           """      
           if len(self.cliThr.conf)<2:

@@ -75,9 +75,11 @@ class lector(threading.Thread):
         while not self.acabar:
             if self.pause:
                self.logger.info("Pausing lector of: %s" % self.idEquip)
+               self.equip.devComm.close()
                while self.pause:
                      time.sleep(1)
                self.logger.info("Resuming lector of: %s" % self.idEquip)
+               self.equip.devComm.resetConnection()
 
             horaActual = time.strftime("%H:%M")
             diffT = int(int(time.time()) - tempsInicial)

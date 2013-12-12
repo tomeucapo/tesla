@@ -62,10 +62,13 @@ class Visor(QtGui.QMainWindow):
         self.ui.actionAturar.setEnabled(0)
         self.ui.actionDesconnectar.setEnabled(0)
 
+        self.loadConfig()
+
+    def loadConfig(self):
         self.ipServer = str(self.dConfig.settings.value("ipServidor").toString())
         self.portServer = int(self.dConfig.settings.value("portServidor").toString())
         self.dirExport = str(self.dConfig.settings.value("dirExport").toString())
- 
+         
     def defColsHist(self):
         varsAnalitza = self.cliThr.values[1]["vars"]
         defsAnalitza = self.cliThr.values[1]["defs"]
@@ -150,7 +153,7 @@ class Visor(QtGui.QMainWindow):
         if self.dConfig.exec_():
            self.dConfig.guardar()
            self.ipServidor = str(self.dConfig.settings.value("ipServidor").toString())
-
+    
     def onCmdAbout(self):
         QtGui.QMessageBox.about(self,self.tr("Sobre el programa"), u"Visor 2.0\n\nClient per poder monitoritzar el servidor de lectures.\nTomeu Capó i Capó 2012 (C)")
 
@@ -166,6 +169,7 @@ class Visor(QtGui.QMainWindow):
     
     def onCmdConnectar(self):
         try:
+          self.loadConfig()
           self.cliThr = clientThread(self.ui, (self.ipServer,self.portServer))
           self.connect(self.cliThr, SIGNAL("pintaVars(int)"), self.pintaVars)
           self.connect(self.cliThr, SIGNAL("pintaEstat(int)"), self.pintaEstat) 
@@ -196,7 +200,6 @@ class Visor(QtGui.QMainWindow):
                 item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsUserCheckable) 
                 item.setCheckState(2, Qt.Unchecked) 
 
-            print self.cliThr.values[id]["estatComm"]
             self.analitzador[id].setForeground(0, QtGui.QBrush(QtGui.QColor("green")))
             self.ui.arbreAnalitzadors.expandItem(self.analitzador[id])
             
@@ -230,22 +233,19 @@ class Visor(QtGui.QMainWindow):
         if colum != 2:
            return
         
-	try:
-       	   if widgetItem.checkState(colum) == Qt.Checked:
-           	finVisor = finestraVisor(descVar, self.cliThr.values[1]['vars'][nomVar])
-           	finVisor.setAttribute(Qt.WA_DeleteOnClose | Qt.WA_LayoutOnEntireRect)
-           	finVisor.setWindowFlags(Qt.SubWindow)
-           	self.ui.zonaDisplays.addSubWindow(finVisor)
-           	finVisor.show()
-           	self.visors[nomVar] = finVisor
-           elif widgetItem.checkState(colum) == Qt.Unchecked:
-                self.visors[nomVar].close()
-                self.visors.pop(nomVar)
-        except KeyError, e:
-	   QtGui.QMessageBox.warning(self,self.tr("Avis"), "No hi ha dades per visualitzar: %s" % str(e))
-   	   QtCore.qDebug(str(e))
-	   widgetItem.setCheckState(colum, Qt.Unchecked)
-		
+        if widgetItem.checkState(colum) == Qt.Checked:
+           equip = widgetItem.parent().text(0) 
+           addrEquip = int(equip.split(":")[0])
+           finVisor = finestraVisor(descVar, self.cliThr.values[addrEquip]['vars'][nomVar])
+           finVisor.setAttribute(Qt.WA_DeleteOnClose | Qt.WA_LayoutOnEntireRect)
+           finVisor.setWindowFlags(Qt.SubWindow)
+           self.ui.zonaDisplays.addSubWindow(finVisor)
+           finVisor.show()
+           self.visors[nomVar] = finVisor
+        elif widgetItem.checkState(colum) == Qt.Unchecked:
+              self.visors[nomVar].close()
+              self.visors.pop(nomVar)
+
     def buidaTot(self):
         QtCore.qDebug("Buidant tot...")
         for varName, visor  in self.visors.iteritems():
