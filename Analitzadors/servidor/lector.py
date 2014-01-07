@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import time, sys, os
+import time, sys, os, signal
 import logging, logging.handlers, logging.config
 import ConfigParser
 
@@ -30,7 +30,10 @@ def getConfig():
         logDir = config.get("General", "log_dir")
     except Exception, e:
         raise Exception, "No puc llegir el fitxer de configuracio lector.ini"
-        
+
+def handler(signum, frame):
+   srvLec.acabar = True
+         
 if __name__ == '__main__':
    try:
       getConfig()
@@ -58,6 +61,8 @@ if __name__ == '__main__':
 
    if autoStart.upper() == "YES":
       srvLec.startAll()
+
+   signal.signal(signal.SIGTERM, handler)
 
    while not srvLec.acabar: 
          try:
