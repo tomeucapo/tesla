@@ -25,7 +25,7 @@ class srvLector:
         self.lectors = {}
         self.qRequest = Queue.Queue(100)
         self.qResponse = Queue.Queue(100)
-        
+        self.finish = False 
         self.mutexC =  threading.Semaphore()
         
         self.my_logger.info("*** Lector de dades v.3.0 ***************************************")
@@ -56,14 +56,15 @@ class srvLector:
             self.my_logger.error(str(err))
             raise IOError, str(err)
 
+        self.workers = []
         for t in range(3):
             w = threading.Thread(target = self.dispatchMessages, args=[t])
             w.setDaemon(1)
             w.start()
+            self.workers.append(w)
             
         self.srv.start()
 
- 
     def __initDevices__(self):
         for idDev, confDev in self.conf.devices.iteritems():
             if confDev["type"] == "serial":
@@ -79,6 +80,7 @@ class srvLector:
             self.my_logger.info("\tCarregant driver analitzador %s ..." % idEquip)
             equip = self.loadDriver(idEquip, confEquip)
             self.lectors[idEquip] = self.initLector(equip, confEquip);
+
 
     """
        Metode que empram per carregar els drivers
@@ -163,7 +165,29 @@ class srvLector:
         
         self.mutexC.release()            
         return retval
-    
+
+    def stopAll(self):
+        self.acabar = True
+
+	self.my_logger.info("Waiting workers ...")
+        self.qRequest.join()
+	for t in self.workers:
+	    self.my_logger.debug("Waiting for one worker ...")
+            try:
+	       t.join()  
+            except: 
+	       pass
+
+	self.my_logger.info("Waiting lectors ...")
+        for l in self.lectors.values():	
+	    l.acabar = True
+
+	    if l.ready:
+               l.join()
+
+        self.srv.aturaTot = True
+        self.finish = True
+
     def start(self, idLector):
         lector = self.lectors.get(idLector)
         if not lector.isAlive():
@@ -179,8 +203,8 @@ class srvLector:
         return("STARTING")       
 
     def shutdown(self, idLector=None):
-        self.acabar = True
-        self.srv.aturaTot = True
+	self.stopAll()
+        #self.acabar = True
         return("DONE")
 
     def getDefs(self, idLector):
@@ -280,13 +304,24 @@ class srvLector:
         self.my_logger.info("Worker %d: Starting..." % idWorker)
         while not self.acabar:
             try:               
-                self.my_logger.debug("Worker %d: Waiting for new task ..." % idWorker)
-                task = self.qRequest.get(block=True)                
+                #self.my_logger.debug("Worker %d: Waiting for new task ..." % idWorker)
+                if self.qRequest.empty():
+		   time.sleep(0.05)
+		   continue
+
+                task = self.qRequest.get() #block=True,timeout=60)                
+
                 ((cmd, args), sockCli) = task
                 self.my_logger.debug("Worker %d: Received task %s ..." % (idWorker, cmd))
                 if not cmd:
                    continue
-                
+               
+ 		if cmd == 'SHUTDOWN':
+		   self.my_logger.debug("Shutting down ...")
+		   self.qRequest.task_done()
+		   self.stopAll()
+		   continue 
+ 
                 try:
                     arg = int(args) if args else 0
                 except ValueError:
@@ -298,15 +333,15 @@ class srvLector:
                 if retval:
                     self.my_logger.debug("Worker %d: Sending response ..." % idWorker)
                     self.qResponse.put((cmd, sockCli, retval))
-                    
+
+                self.qRequest.task_done()
+
             except Queue.Empty, e:
-                self.my_logger.error("Worker %d: %s" % (idWorker, str(e)))                
+                self.my_logger.debug("Worker %d: %s" % (idWorker, str(e)))                
             except ValueError, e:
                 self.my_logger.error("Worker %d: %s" % (idWorker, str(e)))
             except Exception, e:
                 self.my_logger.error(str(e))
                 self.qResponse.put( (cmd, sockCli, "SRV_ERR %d:\t%s" % (idWorker, str(e))) )
             
-            self.qRequest.task_done()
-
         self.my_logger.info("Worker %d: Finished..." % idWorker)

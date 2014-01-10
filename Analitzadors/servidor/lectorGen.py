@@ -38,20 +38,13 @@ class lector(threading.Thread):
            self.equip.clearCache()
            self.dataExp.idEquip = self.idEquip = self.equip.getConfig()
 
-    def statusEquip(self):
-        if self.ready:
-           self.equip.status()
-
-    def run(self):
-        qOut = Queue.Queue(0)
-        lectures = 0
-        k = 0 
-
-        self.logger.info("Starting lectorGen ...")
-        self.logger.debug("Detecting power-meter device ...")
-        
+    def detectEquip(self):
         idEquip = self.equip.getConfig()
+	k = 0
         while not idEquip:
+	      if self.acabar:
+		 return
+ 
               time.sleep(int(math.exp(k)))
 
               idEquip = self.equip.getConfig()              
@@ -59,27 +52,44 @@ class lector(threading.Thread):
               
               k = (k + 1) % 30
 
-        self.idEquip = idEquip
+	return idEquip
 
+    def doPause(self):
+	self.logger.info("Pausing lector of: %s" % self.idEquip)
+        self.equip.devComm.close()
+
+        while self.pause:
+              time.sleep(1)
+
+        self.logger.info("Resuming lector of: %s" % self.idEquip)
+        self.equip.devComm.resetConnection()
+
+    def statusEquip(self):
+        if self.ready:
+           self.equip.status()
+
+    def run(self):
+        self.logger.info("Starting lectorGen ...")
+        self.logger.debug("Detecting power-meter device ...")
+
+        self.idEquip = self.detectEquip() 
+
+        self.logger.info("Power-meter detected: %s" % self.idEquip)
+
+        qOut = Queue.Queue(0)
         self.dataExp = dataExport(qOut, self.dExports, self.equip, self.nodeConf)
         self.dataExp.setDaemon(True)       
         self.dataExp.start()
 
-        self.logger.info("Power-meter detected: %s" % self.idEquip)
-
         tempsInicial = time.time()
         horaGravacio = ''
         self.ready = self.forceReq = True
-
+        lectures = 0
         k = 0
+
         while not self.acabar:
             if self.pause:
-               self.logger.info("Pausing lector of: %s" % self.idEquip)
-               self.equip.devComm.close()
-               while self.pause:
-                     time.sleep(1)
-               self.logger.info("Resuming lector of: %s" % self.idEquip)
-               self.equip.devComm.resetConnection()
+	       self.doPause()
 
             horaActual = time.strftime("%H:%M")
             diffT = int(int(time.time()) - tempsInicial)
@@ -117,5 +127,5 @@ class lector(threading.Thread):
 
         self.logger.info("Stopping lectorGen of: %s" % self.idEquip)
         self.dataExp.aturar = True
-        self.dataExp.join()
+        qOut.join()
         self.logger.info("LectorGen of %s is stopped!" % self.idEquip)

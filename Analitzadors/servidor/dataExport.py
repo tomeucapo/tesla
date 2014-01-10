@@ -184,7 +184,12 @@ class dataExport(threading.Thread):
           self.logger.info("Entering dataExport main loop ...")         
           
           while not self.aturar:
-                mitjaDades = self.dataAverage(self.queueOut.get(block=True))
+	        if self.queueOut.empty():
+	           time.sleep(0.05)
+	           continue
+
+                mitjaDades = self.dataAverage(self.queueOut.get())  #block=True, timeout=60))
+
                 self.logger.info("Storing sample data ...")
 
                 for mName, expP in self.lExport.iteritems():
@@ -201,7 +206,7 @@ class dataExport(threading.Thread):
                                             
                 self.queueOut.task_done()
    
-          self.dataExp.moveToBulk()
-          self.dataExp.storeBulk()
+          self.moveToBulk()
+          self.storeBulk()
 
           self.logger.info("Stopped dataExport ...")         

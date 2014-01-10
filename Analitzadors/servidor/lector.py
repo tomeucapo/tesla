@@ -32,7 +32,9 @@ def getConfig():
         raise Exception, "No puc llegir el fitxer de configuracio lector.ini"
 
 def handler(signum, frame):
-   srvLec.acabar = True
+   my_logger.info("SIGTERM Received! Stopping all ...")
+   srvLec.stopAll()
+   my_logger.info("All threads are stopped!!!")
          
 if __name__ == '__main__':
    try:
@@ -64,7 +66,7 @@ if __name__ == '__main__':
 
    signal.signal(signal.SIGTERM, handler)
 
-   while not srvLec.acabar: 
+   while not srvLec.finish: 
          try:
              time.sleep(0.05)
          except KeyboardInterrupt, e:
