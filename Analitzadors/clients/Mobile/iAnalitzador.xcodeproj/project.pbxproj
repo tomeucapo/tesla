@@ -14,11 +14,7 @@
 		A11E3B5A17FE65D100FB6F85 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E3B5917FE65D100FB6F85 /* MainViewController.m */; };
 		A11E3B5D17FF823E00FB6F85 /* Configurador.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E3B5C17FF823E00FB6F85 /* Configurador.m */; };
 		A11E3B60180052A100FB6F85 /* EquipViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E3B5F180052A100FB6F85 /* EquipViewController.m */; };
-		A11F581916470A0D0012E6D4 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A11F581816470A0D0012E6D4 /* Default-568h@2x.png */; };
 		A1291D421808B93B000EF24D /* MainStoryboardiPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A1291D411808B93B000EF24D /* MainStoryboardiPad.storyboard */; };
-		A155F28215C3684500A3FA39 /* Setup.png in Resources */ = {isa = PBXBuildFile; fileRef = A155F28115C3684500A3FA39 /* Setup.png */; };
-		A155F28415C368EC00A3FA39 /* Plug.png in Resources */ = {isa = PBXBuildFile; fileRef = A155F28315C368EC00A3FA39 /* Plug.png */; };
-		A155F28615C3691800A3FA39 /* Tape.png in Resources */ = {isa = PBXBuildFile; fileRef = A155F28515C3691800A3FA39 /* Tape.png */; };
 		A15EB9B01512B78600AB4D1B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A15EB9AF1512B78600AB4D1B /* UIKit.framework */; };
 		A15EB9B21512B78600AB4D1B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A15EB9B11512B78600AB4D1B /* Foundation.framework */; };
 		A15EB9B41512B78600AB4D1B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A15EB9B31512B78600AB4D1B /* CoreGraphics.framework */; };
@@ -41,7 +37,6 @@
 		A1A9484F1593D63E0069C304 /* TeslaClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A1A9484D1593D63E0069C304 /* TeslaClient.m */; };
 		A1C92CD118077B68005D13F4 /* ConfigCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C92CD018077B68005D13F4 /* ConfigCell.m */; };
 		A1DDFCDE1808C4CF00462E27 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1DDFCDD1808C4CF00462E27 /* QuartzCore.framework */; };
-		A1E9260B17FE2CA600391EAC /* Site Map.png in Resources */ = {isa = PBXBuildFile; fileRef = A1E9260A17FE2CA600391EAC /* Site Map.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,11 +66,7 @@
 		A11E3B5C17FF823E00FB6F85 /* Configurador.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Configurador.m; sourceTree = "<group>"; };
 		A11E3B5E180052A100FB6F85 /* EquipViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EquipViewController.h; sourceTree = "<group>"; };
 		A11E3B5F180052A100FB6F85 /* EquipViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EquipViewController.m; sourceTree = "<group>"; };
-		A11F581816470A0D0012E6D4 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		A1291D411808B93B000EF24D /* MainStoryboardiPad.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainStoryboardiPad.storyboard; sourceTree = "<group>"; };
-		A155F28115C3684500A3FA39 /* Setup.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Setup.png; sourceTree = "<group>"; };
-		A155F28315C368EC00A3FA39 /* Plug.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Plug.png; sourceTree = "<group>"; };
-		A155F28515C3691800A3FA39 /* Tape.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Tape.png; sourceTree = "<group>"; };
 		A15EB9AB1512B78600AB4D1B /* iAnalitzador.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iAnalitzador.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A15EB9AF1512B78600AB4D1B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		A15EB9B11512B78600AB4D1B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -108,7 +99,6 @@
 		A1C92CCF18077B68005D13F4 /* ConfigCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigCell.h; sourceTree = "<group>"; };
 		A1C92CD018077B68005D13F4 /* ConfigCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfigCell.m; sourceTree = "<group>"; };
 		A1DDFCDD1808C4CF00462E27 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		A1E9260A17FE2CA600391EAC /* Site Map.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Site Map.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -137,16 +127,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		A107BBF1159BB98A00674DE1 /* Resources */ = {
+		A107BBF1159BB98A00674DE1 /* Storyboards */ = {
 			isa = PBXGroup;
 			children = (
-				A1E9260A17FE2CA600391EAC /* Site Map.png */,
-				A155F28515C3691800A3FA39 /* Tape.png */,
-				A155F28315C368EC00A3FA39 /* Plug.png */,
-				A155F28115C3684500A3FA39 /* Setup.png */,
+				A1291D411808B93B000EF24D /* MainStoryboardiPad.storyboard */,
 				A198302815AE457900A434D9 /* MainStoryboard.storyboard */,
 			);
-			name = Resources;
+			name = Storyboards;
 			sourceTree = "<group>";
 		};
 		A10A16DD15AE235700BA4574 /* Controllers */ = {
@@ -187,20 +174,10 @@
 			name = Propies;
 			sourceTree = "<group>";
 		};
-		A1291D431808BA59000EF24D /* iPad */ = {
-			isa = PBXGroup;
-			children = (
-				A1291D411808B93B000EF24D /* MainStoryboardiPad.storyboard */,
-			);
-			name = iPad;
-			sourceTree = "<group>";
-		};
 		A15EB9A01512B78500AB4D1B = {
 			isa = PBXGroup;
 			children = (
 				A1813D3818D3CA1C00641B7E /* Media.xcassets */,
-				A11F581816470A0D0012E6D4 /* Default-568h@2x.png */,
-				A1DDFCE2180F524800462E27 /* Images */,
 				A15EB9B51512B78600AB4D1B /* iAnalitzador */,
 				A15EB9DE1512B78600AB4D1B /* iAnalitzadorTests */,
 				A15EB9AE1512B78600AB4D1B /* Frameworks */,
@@ -238,8 +215,7 @@
 				A10A16DD15AE235700BA4574 /* Controllers */,
 				A15EB9BE1512B78600AB4D1B /* AppDelegate.h */,
 				A15EB9BF1512B78600AB4D1B /* AppDelegate.m */,
-				A107BBF1159BB98A00674DE1 /* Resources */,
-				A1291D431808BA59000EF24D /* iPad */,
+				A107BBF1159BB98A00674DE1 /* Storyboards */,
 				A15EB9B61512B78600AB4D1B /* Supporting Files */,
 			);
 			path = iAnalitzador;
@@ -284,13 +260,6 @@
 				A15EB9C51512B78600AB4D1B /* FirstViewController.m */,
 			);
 			name = Olds;
-			sourceTree = "<group>";
-		};
-		A1DDFCE2180F524800462E27 /* Images */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Images;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -365,13 +334,8 @@
 			files = (
 				A15EB9BA1512B78600AB4D1B /* InfoPlist.strings in Resources */,
 				A1291D421808B93B000EF24D /* MainStoryboardiPad.storyboard in Resources */,
-				A1E9260B17FE2CA600391EAC /* Site Map.png in Resources */,
 				A198302A15AE457900A434D9 /* MainStoryboard.storyboard in Resources */,
 				A1813D3918D3CA1C00641B7E /* Media.xcassets in Resources */,
-				A155F28215C3684500A3FA39 /* Setup.png in Resources */,
-				A155F28415C368EC00A3FA39 /* Plug.png in Resources */,
-				A155F28615C3691800A3FA39 /* Tape.png in Resources */,
-				A11F581916470A0D0012E6D4 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
