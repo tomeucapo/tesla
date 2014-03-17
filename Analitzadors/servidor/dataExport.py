@@ -67,7 +67,7 @@ class dataExport(threading.Thread):
           self.logger.info("Move %d samples to bulk store ..." % self.queuePending.qsize())
           while self.queuePending.qsize() > int(self.queuePending.maxsize/2):
                 (timeS, expP, data) = self.queuePending.get()
-                self.pendingSamples.append((time.mktime(timeS), expP.__class__.__name__, pickle.dumps(data).encode('hex')))
+                self.pendingSamples.append((time.mktime(timeS), expP.__class__.__name__, pickle.dumps(data).encode('hex'), self.idEquip))
                 self.queuePending.task_done()
 
       # Metode per a gravar un paquet de dades que s'han descartat per errors de transmissio
@@ -80,7 +80,7 @@ class dataExport(threading.Thread):
           self.logger.info("Storing %d sample(s) to disk ..." % len(self.pendingSamples))
           try:
               cur = self.persistDb.cursor()
-              cur.executemany("INSERT INTO SAMPLES VALUES(?, ?, ?)", self.pendingSamples)
+              cur.executemany("INSERT INTO SAMPLES VALUES(?, ?, ?, ?)", self.pendingSamples)
               self.persistDb.commit()
           except lite.DataError, e:
               self.logger.error("Persistence store error: %s" % str(e))
@@ -91,7 +91,7 @@ class dataExport(threading.Thread):
           #self.logger.debug("Deleting record: %s ..." % time.strftime("%d/%m/%Y %H:%M:%S", time.localtime(time.mktime(timeS)) ) )
           try:
               cur = self.persistDb.cursor()              
-              query = "delete from samples where module='%s' and time=%d" % (module, time.mktime(timeS))
+              query = "delete from samples where module='%s' and time=%d and id_equip=%d" % (module, time.mktime(timeS), self.idEquip)
               cur.execute(query)
               
               self.logger.debug(query)
@@ -102,7 +102,7 @@ class dataExport(threading.Thread):
       def loadBulk(self):          
           try:
               cur = self.persistDb.cursor()
-              cur.execute("select time, module, data from samples")
+              cur.execute("select time, module, data from samples where id_equip=%d" % self.idEquip)
               
               for (timeS, moduleName, data) in cur:
                   module = self.lExport.get(str(moduleName))
@@ -161,7 +161,7 @@ class dataExport(threading.Thread):
                 while not self.queuePending.empty():
                       (timeS, expP, mitjaDades) = self.queuePending.get()
     
-                      self.logger.info("Storing sample pending to send: %s ..." % time.strftime("%d/%m/%Y %H:%M:%S", timeS))
+                      self.logger.info("Storing sample pending to send: %d %s ..." % (self.idEquip, time.strftime("%d/%m/%Y %H:%M:%S", timeS)))
                       try:
                          expP.save(timeS, mitjaDades)                         
                       except ClientDuplicateEntry, e:

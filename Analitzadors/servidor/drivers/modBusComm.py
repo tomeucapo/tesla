@@ -6,13 +6,10 @@
 # Classe que s'encarrega de les comunicacions amb analitzadors d'energia
 # que empren protocol MODBUS a travers del port serie en mode RTU.
 #
-# Inicialment desenvolupat per treballar amb analitzadors de la serie PMxxx
-# de Groupe Schneider.
-#
-# Tomeu Capó
+# Tomeu Capo
 #
 
-import serial
+import serial, time
 from crcTable import *
 
 E_OK = 0
@@ -29,6 +26,8 @@ WRITE_WORD  = 6
 DIAG_EXCHNG = 8
 REPOR_SLAVE = 17
 IDENT_DSP   = 43
+
+TOUT_RX = 60
 
 msgErrors = {E_NOT_RESPONSE: "El dispositiu no reson, ho tonare a provar",
              E_CRC_ERROR:    "La trama rebuda es erronea, error de CRC!",
@@ -65,7 +64,7 @@ class modBusComm:
     def enviar(self, op, addr, size, data=None):
         retval = True
 
-        if op not in [READ_E_WORDS, READ_WORDS, WRITE_WORDS, REPOR_SLAVE]:
+        if op not in [READ_E_WORDS, READ_WORDS, WRITE_WORDS, REPOR_SLAVE, IDENT_DSP]:
            raise codeFuncNotValid("Code function not valid")
 
         if not self.serie.isOpen():
@@ -81,8 +80,8 @@ class modBusComm:
         # Depenent del tipus d'operacio que tinguem la trama te una forma o un altre
 
         if op in [READ_E_WORDS, READ_WORDS, WRITE_WORDS]:        
-           sndtxt += chr((addr - 1) >> 8)
-           sndtxt += chr((addr - 1) & 0xff)
+           sndtxt += chr(addr-1 >> 8)
+           sndtxt += chr(addr-1 & 0xff)
            sndtxt += chr(size >> 8)
            sndtxt += chr(size & 0xff) 
 
@@ -110,8 +109,13 @@ class modBusComm:
                       
         return(retval)           
 
+    def close(self):
+        if self.serie.isOpen():
+           self.serie.close()
+           
     def resetConnection(self):
         if self.serie.isOpen():
+           self.__flushBuffers__()
            self.serie.close()
            
         try:
@@ -131,16 +135,51 @@ class modBusComm:
         if not self.serie.isOpen():
            self.lastError = E_NOT_OPEN_COMM
            return False
-        
+
+        headCmd = 0        
+        headCmdC = self.serie.read(1)
+        if headCmdC:
+           headCmd = ord(headCmdC)
+
+        sTime = time.time()        
+        while headCmd != self.adrecaEsclau:
+            try:
+                if time.time()-sTime < TOUT_RX:
+                    headCmdC = self.serie.read(1)
+                else:
+                    self.logger.error("Device %d timeout with reading frame header" % self.adrecaEsclau)
+                    self.lastError = E_NOT_RESPONSE
+                    return False
+            except serial.serialutil.SerialException, e:
+                self.logger.error(str(e))
+                self.lastError = E_CMD_ERROR 
+                return False
+
+            if headCmdC:
+               headCmd = ord(headCmdC)
+               
+        try:
+            respHead = self.serie.read(2)
+        except serial.serialutil.SerialException, e:
+            self.logger.error(str(e))
+            self.lastError = E_CMD_ERROR 
+            return False
+
+        respHead = frameRx = headCmdC+respHead
+
+        self.logger.error("[ RX HEAD ] LEN = %d, DATA = %s" % (len(respHead), ' '.join(["%(vc)02X" % {"vc": ord(c)} for c in respHead])) )
+
+        """
         try:
             respHead = self.serie.read(3)
         except serial.serialutil.SerialException, e:
             self.logger.error(str(e))
             self.lastError = E_CMD_ERROR 
             return False
-
+        
         frameRx = respHead
-
+        """
+        
         # Si a la capsalera hi ha res. Recordam que el metode read
         # te un timeout. Normalment basta si l'esclau esta funcionant correctament.
 
@@ -160,7 +199,7 @@ class modBusComm:
             self.lastError = E_CMD_ERROR
             self.lastErrorCmd = 0 #ord(resp[2])-1
             return False
- 
+         
         lenData = ord(respHead[2]) 
         self.lastResponse = []
         self.lastResponseB = ''
@@ -187,6 +226,7 @@ class modBusComm:
                 i += 2
 
         if i == 0:
+           self.logger.error("[ RX BODY  ] LEN = %d, DATA = %s" % (len(frameRx), ' '.join(["%(vc)02X" % {"vc": ord(c)} for c in frameRx])) )
            self.__flushBuffers__()
            self.lastError = E_NOT_RESPONSE 
            return False
@@ -203,7 +243,7 @@ class modBusComm:
 
         frameRx += respTail
         
-        self.logger.debug("[ RX ] " + ' '.join(["%(vc)02X" % {"vc": ord(c)} for c in frameRx]))
+        self.logger.debug( "[ RX ] %s " % (' '.join(["%(vc)02X" % {"vc": ord(c)} for c in frameRx])) )
 
         # Calculam el CRC en base a la informacio rebuda fins ara
         # i verificam que sigui el mateix que rebem del esclau.

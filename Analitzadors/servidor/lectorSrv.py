@@ -70,7 +70,7 @@ class srvLector:
             if confDev["type"] == "serial":
                config = confDev["config"]
                try:
-                   self.device[idDev] = (serial.Serial(config["port"], config["baud"], timeout=float(config["timeout"]), bytesize=int(config["bits"])),
+                   self.device[idDev] = (serial.Serial(config["port"], config["baud"], timeout=float(config["timeout"]), parity=config["parity"], bytesize=int(config["bits"])),
                                          threading.Semaphore())
                except serial.serialutil.SerialException, err:
                    raise serial.serialutil.SerialException, "Error initializing device %s: %s" % ( idDev, str(err) )
