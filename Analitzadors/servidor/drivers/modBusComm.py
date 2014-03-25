@@ -167,7 +167,7 @@ class modBusComm:
 
         respHead = frameRx = headCmdC+respHead
 
-        self.logger.error("[ RX HEAD ] LEN = %d, DATA = %s" % (len(respHead), ' '.join(["%(vc)02X" % {"vc": ord(c)} for c in respHead])) )
+        #self.logger.error("[ RX HEAD ] LEN = %d, DATA = %s" % (len(respHead), ' '.join(["%(vc)02X" % {"vc": ord(c)} for c in respHead])) )
 
         """
         try:
