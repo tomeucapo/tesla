@@ -115,8 +115,10 @@ class Visor(QtGui.QMainWindow):
         statusComm = self.cliThr.values[idEquip]["estatComm"]
         
         # Refresca els displays actius
+        if not self.visors.get(idEquip):
+            return
 
-        for varName, visor in self.visors.iteritems():            
+        for varName, visor in self.visors[idEquip].iteritems():            
             if statusComm == STA_COMM:
                visor.widget().setBlur(False)
             else:
@@ -236,15 +238,19 @@ class Visor(QtGui.QMainWindow):
         if widgetItem.checkState(colum) == Qt.Checked:
            equip = widgetItem.parent().text(0) 
            addrEquip = int(equip.split(":")[0])
-           finVisor = finestraVisor(descVar, self.cliThr.values[addrEquip]['vars'][nomVar])
+           finVisor = finestraVisor("%d : %s" % (addrEquip, descVar), self.cliThr.values[addrEquip]['vars'][nomVar])
            finVisor.setAttribute(Qt.WA_DeleteOnClose | Qt.WA_LayoutOnEntireRect)
            finVisor.setWindowFlags(Qt.SubWindow)
            self.ui.zonaDisplays.addSubWindow(finVisor)
            finVisor.show()
-           self.visors[nomVar] = finVisor
+           if not self.visors.get(addrEquip):
+              self.visors[addrEquip] = { nomVar: finVisor }
+           else:
+              self.visors[addrEquip][nomVar] = finVisor
         elif widgetItem.checkState(colum) == Qt.Unchecked:
-              self.visors[nomVar].close()
-              self.visors.pop(nomVar)
+           if self.visors.get(addrEquip) and self.visors[addrEquip].get(nomVar):
+              self.visors[addrEquip][nomVar].close()
+              self.visors[addrEquip].pop(nomVar, None)
 
     def buidaTot(self):
         QtCore.qDebug("Buidant tot...")

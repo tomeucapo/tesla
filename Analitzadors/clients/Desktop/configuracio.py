@@ -53,6 +53,8 @@ class Configuracio(QtGui.QDialog):
           equips = self.cliThr.conf['equips']
           devices = self.cliThr.conf['devices']
 
+          self.ui.treeDevices.clear()
+
           cfgEquip = {}
           for idEquip, cnfEquip in equips.iteritems():
               idDevice = str(cnfEquip['config']['device'])
