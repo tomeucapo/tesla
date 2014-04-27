@@ -4,7 +4,7 @@
 #
 # das8000.py
 # Classe que s'encarrega de realitzar consultes i tractar les dades
-# d'analitzadors PMxxx del fabricant Schneider-Electric.
+# dels equips d'adquisició de dades de Desin DAS-8000
 #
 # Tomeu Capó
 #
@@ -38,9 +38,7 @@ class das8000:
         self.model = model
 
         self.fileNameCache = hashlib.md5("%d:%s" % (self.id, self.model)).hexdigest()
-        
-        self.statusQuerys = ["HMU", "ERR", "VSO", "NSN"]
-        
+     
         self.lastStatus = {}
         self.lastStatus["lastTime"] = 0
         if model in das8000Regs.tRegs.keys():
@@ -150,10 +148,9 @@ class das8000:
         if not retval:
            return ''
         
-        #self.status()               # Determinal l'estat de l'analitzador
-        #self.__getSerial__()        # Agafam el número de série i la versió del sistema operatiu
-        #self.loadRanges()           # Carrega els registres d'escala del propi analitzador
-        
+        self.status()
+        self.loadRanges()
+
         self.logger.debug("\tGuardant configuracio del dispositiu a la cache...")
         fConfDrv = open(self.fileNameCache,"wb")
         pickle.dump((retval, self.rangs, self.lastStatus), fConfDrv, pickle.HIGHEST_PROTOCOL)
@@ -161,52 +158,9 @@ class das8000:
 
         return(retval)
 
-    def __getSerial__(self):
-        for statVar in ["VSO", "NSN"]:
-            try:
-                params = pmRegs.tRegs[self.model][statVar]
-            except KeyError, e:
-                raise KeyError, "Aquest driver de %s no te configurat el parametre %s" % (self.model, statVar)
-                
-            self.mutex.acquire()
-            if not self.devComm.enviar(READ_WORDS, params["registre"], params["numRegs"]):
-               self.mutex.release()
-               if self.devComm.lastError in [E_NOT_OPEN_COMM, E_SND_ERROR]:
-                  self.logger.error("Error enviant, reiniciarem connexio del dispositiu") 
-                  self.devComm.resetConnection()                
-               continue
-       
-            rebut = self.devComm.rebre()
-            self.mutex.release()            
-
-            if rebut:
-               self.lastStatus[statVar] = self.devComm.lastBigIntValue if params["compost"] else self.devComm.lastResponse                           
-               self.lastStatus["lastTime"] = time.time()
-
     def status(self):
-        for statVar in ["HMU", "ERR"]:
-            try:
-                params = pmRegs.tRegs[self.model][statVar]
-            except KeyError, e:
-                raise KeyError, "Aquest driver de %s no te configurat el parametre %s" % (self.model, statVar)
-                
-            self.mutex.acquire()
-            if not self.pmComm.enviar(READ_WORDS, params["registre"], params["numRegs"]):
-               self.mutex.release()
-               if self.pmComm.lastError in [E_NOT_OPEN_COMM, E_SND_ERROR]:
-                  self.logger.error("Error enviant, reiniciarem connexio del dispositiu") 
-                  self.pmComm.resetConnection()                
-               continue
-       
-            rebut = self.pmComm.rebre()
-            self.mutex.release()            
-
-            if rebut:
-               self.lastStatus[statVar] = self.pmComm.lastBigIntValue if params["compost"] else self.pmComm.lastResponse
-               if statVar == 'ERR':
-                  self.lastStatus["ERR_MSG"] = self.getErrorMessage()
-                            
-               self.lastStatus["lastTime"] = time.time()
+        # TODO: Needs get status from device
+        self.lastStatus["lastTime"] = time.time()
             
         
     def loadRanges(self):
@@ -221,15 +175,17 @@ class das8000:
             self.rangs[pt] = 0
 
             self.mutex.acquire()
-            if not self.pmComm.enviar(READ_WORDS, params["registre"], params["numRegs"]):
+            if not self.devComm.enviar(READ_WORDS, params["registre"], params["numRegs"]):
                self.mutex.release()
-               if self.pmComm.lastError in [E_NOT_OPEN_COMM, E_SND_ERROR]:
+               if self.devComm.lastError in [E_NOT_OPEN_COMM, E_SND_ERROR]:
                   self.logger.error("Error enviant, reiniciarem connexio del dispositiu") 
-                  self.pmComm.resetConnection()                
+                  self.devComm.resetConnection()                
                continue
        
-            if self.pmComm.rebre():
-               self.rangs[pt] = pmRegs.factorEscala[str(self.pmComm.lastResponse[0])]
+            if self.devComm.rebre():
+               marcaEscala = str(self.devComm.lastResponse[0])
+               if das8000Regs.factorEscala.get(marcaEscala):
+                  self.rangs[pt] = das8000Regs.factorEscala[marcaEscala]
             self.mutex.release()
 
     def getErrorMessage(self):

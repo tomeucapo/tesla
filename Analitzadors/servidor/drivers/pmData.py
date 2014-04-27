@@ -229,7 +229,10 @@ class pmData:
                continue
        
             if self.pmComm.rebre():
-               self.rangs[pt] = pmRegs.factorEscala[str(self.pmComm.lastResponse[0])]
+               marcaEscala = str(self.pmComm.lastResponse[0])
+               if pmRegs.factorEscala.get(marcaEscala):
+                  self.rangs[pt] = pmRegs.factorEscala[marcaEscala]
+
             self.mutex.release()
 
     def getErrorMessage(self):

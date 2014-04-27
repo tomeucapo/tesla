@@ -184,9 +184,9 @@ class dataExport(threading.Thread):
           self.logger.info("Entering dataExport main loop ...")         
           
           while not self.aturar:
-	        if self.queueOut.empty():
-	           time.sleep(0.05)
-	           continue
+                if self.queueOut.empty():
+                   time.sleep(0.05)
+                   continue
 
                 mitjaDades = self.dataAverage(self.queueOut.get())  #block=True, timeout=60))
 

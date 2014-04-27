@@ -13,3 +13,5 @@ tRegs = {
       
         }
 }
+
+factorEscala = {}
