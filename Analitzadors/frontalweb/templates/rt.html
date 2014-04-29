@@ -11,7 +11,9 @@
   </div>
   
   <script type="text/javascript">
-  
+ 
+  var dataDefs;
+
   function getVarsSelected()
   {
            var selected = [];
@@ -78,8 +80,18 @@
 		var listData = [ ['Label', 'Value'] ];		
 		for (var i = 0; i < selectedVars.length; i++)
 		{
+                    definicio = dataDefs[selectedVars[i]];
+                    if ("magnitut" in definicio)
+                        magnitut = definicio.magnitut;
+                    else magnitut = "";
+
 		    for (var j = 0; j < dataR.values[selectedVars[i]].length; j++)
-			listData.push([selectedVars[i]+" ("+j+")", Math.round(dataR.values[selectedVars[i]][j])]);
+                    {
+                        if (definicio.hasOwnProperty("descVars"))
+                            nomVar = definicio.descVars[j];
+                        else nomVar = selectedVars[i];
+			listData.push([magnitut+" ("+nomVar+")", Math.round(dataR.values[selectedVars[i]][j])]);
+                    }
 		}		   
 	        return google.visualization.arrayToDataTable( listData );
 	    },

@@ -21,7 +21,7 @@ urlpatterns = patterns('',
     (r'^central/ws/', include('gestioEnergetica.ws.urls')),
 
     # URLs del frontal web    
-    (r'^nodes$', listNodes),
+    (r'^nodes(?:|/)$', listNodes),
     (r'^node/sQuery=(?P<sQuery>[^/]+)$', listNodes),
     (r'^node/(?P<nodeId>[^/]+)/analizers$', listAnalizers),
     (r'^parametres/(?P<analizerId>[^/]+)$', listParametres),

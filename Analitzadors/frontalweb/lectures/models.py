@@ -3,6 +3,9 @@ from django.db import models
 
 import math
 
+def get_total_seconds(td): 
+    return (td.microseconds + (td.seconds + td.days * 24 * 3600) * 1e6) / 1e6
+
 class Node(models.Model):
       nom = models.CharField(max_length=50)
       ubicacio = models.CharField(max_length=100)
@@ -78,5 +81,5 @@ class FranjaHoraria(models.Model):
       @property
       def hores(self):
           tdelta = datetime.strptime(self.horaFi.strftime("%H:%M:%S"), "%H:%M:%S")-datetime.strptime(self.horaInici.strftime("%H:%M:%S"), "%H:%M:%S")
-          return math.ceil(tdelta.total_seconds()/60/60)
+          return math.ceil(get_total_seconds(tdelta)/60/60) #tdelta.total_seconds()/60/60)
       

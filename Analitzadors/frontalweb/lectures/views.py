@@ -35,7 +35,7 @@ def listNodes(request, sQuery=None):
     else:
        nodesSel = Node.objects.all()
 
-    for node in nodesSel:
+    for node in nodesSel.order_by('-nom'):
         nodes.append( {"id": node.id, "nom": node.nom, "host": node.host, "ubicacio": node.ubicacio})
     
     result = { "ResultSet": {"Nodes": nodes, }}

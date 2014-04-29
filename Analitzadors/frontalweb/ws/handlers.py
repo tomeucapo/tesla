@@ -154,7 +154,10 @@ class LectorHandler(BaseHandler):
        try:
           node = Node.objects.get(id=nodeId)
           cliLector = ctrlLector((node.host,50007))
-          retval = getattr(cliLector, "get"+operation)(analitzadorId)
+          if operation != 'Conf':
+             retval = getattr(cliLector, "get"+operation)(analitzadorId)
+          else:
+             retval = getattr(cliLector, "get"+operation)()
           cliLector.desconnecta()
        except ObjectDoesNotExist:
           retval = rc.NOT_FOUND

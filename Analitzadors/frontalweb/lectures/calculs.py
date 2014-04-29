@@ -99,12 +99,9 @@ def costsTarifes(request, dataInici, dataFi, nodeAnalitzadorId):
            liniaDia[nomTarifa]["horesTarifa"] += horesTarifa
            liniaDia[nomTarifa]["total"] += l.valor
            liniaDia[nomTarifa]["lectures"] += 1 
-  
-        
 
     resultat = {"ResultSet": {"Linies": [], }}
-    print lTarifes
- 
+
     for dataLectura, tarifa in potFranjes.iteritems():
         linia = {"data": dataLectura.strftime("%d-%m-%Y"), "consumTotal": 0}
         consumTotal = 0
