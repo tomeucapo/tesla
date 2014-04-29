@@ -29,7 +29,7 @@ class clientRest:
                       "MODEL"     : self.equip.model }
           
           dataWS = urllib.urlencode(campsWS)
-          urlReq = "%s/history/save/%s/%s" % (self.URLDest, self.nodeConf["id"], self.equip.id)
+          urlReq = "%s/history/save/%s/%s/" % (self.URLDest, self.nodeConf["id"], self.equip.id)
           
           self.logger.info("Sending sample to %s" % urlReq)
           
