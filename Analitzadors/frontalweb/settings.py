@@ -10,15 +10,23 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASE_ENGINE = 'postgresql_psycopg2'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = 'gestEnergia'             # Or path to database file if using sqlite3.
-DATABASE_USER = 'gestener'             # Not used with sqlite3.
-DATABASE_PASSWORD = 'g3st3n3r'         # Not used with sqlite3.
-DATABASE_HOST = 'bedb2.gcs'             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+DATABASES = {
+    'default': {
+                'ENGINE': 'django.db.backends.postgresql_psycopg2',           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+                'NAME': 'gestEnergia',             # Or path to database file if using sqlite3.
+                'USER': 'gestener',             # Not used with sqlite3.
+                'PASSWORD': 'g3st3n3r',         # Not used with sqlite3.
+                'HOST': 'bedb2.gcs',             # Set to empty string for localhost. Not used with sqlite3.
+                'PORT': ''             # Set to empty string for default. Not used with sqlite3.
+               }
+}
 
 CACHES = {
     'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    },
+    'resources': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211',
     }
@@ -60,13 +68,12 @@ SECRET_KEY = 'fpvxg&s04k$+!z5(+1uzq!+5!4x3-d0q0+nq!gn4gm5f^xxhys'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.load_template_source',
-    'django.template.loaders.app_directories.load_template_source',
-#     'django.template.loaders.eggs.load_template_source',
+     'django.template.loaders.filesystem.Loader',
+     'django.template.loaders.app_directories.Loader',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.core.context_processors.auth",
+    "django.contrib.auth.context_processors.auth",
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
@@ -74,14 +81,12 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.contrib.csrf.middleware.CsrfMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    #'django.middleware.common.CommonMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware',
-    #'django.contrib.sessions.middleware.SessionMiddleware',
-    #'django.contrib.auth.middleware.AuthenticationMiddleware'
+    'django.contrib.auth.middleware.AuthenticationMiddleware'
 )
 
 TEMPLATE_DIRS = (

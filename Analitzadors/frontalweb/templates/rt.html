@@ -56,7 +56,7 @@
 	  
           conn.setDefaultPostHeader(false);
           conn.initHeader("Content-Type", "application/json; charset=utf-8");
-          conn.asyncRequest("GET","/central/ws/rt/get/Defs/"+nodeId+"/"+analizerId,
+          conn.asyncRequest("GET","/ws/v2/lector/get/Defs/"+nodeId+"/"+analizerId+"/?format=json",
                                            {
                                               success: fillSelect,
                                               failure: errorRead
@@ -131,7 +131,7 @@
                      this.conn.initHeader("Content-Type", "application/json; charset=utf-8");
 		     
 		     Dom.get("statusRead").innerHTML="Consultant ...";
-                     this.conn.asyncRequest("GET","/central/ws/rt/get/Vars/"+nodeId+"/"+analizerId,
+                     this.conn.asyncRequest("GET","/ws/v2/lector/get/Vars/"+nodeId+"/"+analizerId+"/?format=json",
                                            {
                                               success: this.drawChart,
                                               failure: this.errorRead

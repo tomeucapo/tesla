@@ -52,7 +52,7 @@
                   }
         };
         
-        var histDataSource = new YAHOO.util.DataSource("/central/ws/history/load/");
+        var histDataSource = new YAHOO.util.DataSource("/ws/v2/history/load/");
         histDataSource.responseType = YAHOO.util.DataSource.TYPE_JSON;
         histDataSource.connXhrMode = "queueRequests";
         histDataSource.responseSchema = {
@@ -61,7 +61,7 @@
         };
 
         var histDataTable = new YAHOO.widget.DataTable("resultats", histColumnDefs, histDataSource, 
-                                                       {scrollable: true, height:"430px", width: "550px"});
+                                                       {initialLoad: false, scrollable: true, height:"430px", width: "550px"});
                                                             
         histDataTable.subscribe("rowMouseoverEvent", histDataTable.onEventHighlightRow); 
 	histDataTable.subscribe("rowMouseoutEvent", histDataTable.onEventUnhighlightRow); 
@@ -125,16 +125,16 @@
                   argument : histDataTable.getState()
               };
       
-              var dataInici = Dom.get("dateFrom");
-              var dataFi = Dom.get("dateTo");
-              var node = Dom.get("nodeId");
-              var analizer = Dom.get("analizerId");
+              var dataInici = Dom.get("dateFrom").value;
+              var dataFi = Dom.get("dateTo").value;
+              var node = Dom.get("nodeId").value;
+              var analizer = Dom.get("analizerId").value;
               var variable = Dom.get("varC");
 	      
-              if (dataInici.value.match("^[0-9]{1,2}\-[0-9]{1,2}\-[0-9]{4}") && dataFi.value.match("^[0-9]{1,2}\-[0-9]{1,2}\-[0-9]{4}"))  
+              if (dataInici.match("^[0-9]{1,2}\-[0-9]{1,2}\-[0-9]{4}") && dataFi.match("^[0-9]{1,2}\-[0-9]{1,2}\-[0-9]{4}"))  
               {
                   YAHOO.loading.container.wait.show();
-                  histDataSource.sendRequest(analizer.value+"/"+selectVars.value+"/"+dataInici.value+"/"+dataFi.value, oCallback);   
+                  histDataSource.sendRequest(node+"/"+analizer+"/"+selectVars.value+"/"+dataInici+"/"+dataFi, oCallback);   
               } else
                  alert("El format de les dates es incorrecte!");
         });

@@ -136,7 +136,7 @@
 	analizerAC.itemSelectEvent.subscribe(function(sType, aArgs) {
 	        var oData = aArgs[2];
 	        Dom.get("analizer").value = oData.model+" (Addr = "+oData.addr+")";
-		Dom.get("analizerId").value = oData.id;
+		Dom.get("analizerId").value = oData.addr;
 		
 	       {% if not historial and not lectures %}
 	          Dom.get("analizerAddr").value = oData.addr;

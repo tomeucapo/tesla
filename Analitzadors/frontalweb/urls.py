@@ -3,11 +3,19 @@ from django.conf.urls.defaults import patterns, include, url
 from lectures.views import *
 from lectures.calculs import *
 
+from ws2.history import HistoryResource
+from ws2.lector import LectorResource
+
+from tastypie.api import Api
 import settings,os 
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
+
+newApi = Api(api_name='v2')
+newApi.register(HistoryResource())
+newApi.register(LectorResource())
 
 urlpatterns = patterns('',
 
@@ -19,6 +27,9 @@ urlpatterns = patterns('',
     
     # URL del webservice
     (r'^central/ws/', include('gestioEnergetica.ws.urls')),
+
+    # URLs del webservice v2
+    (r'^ws/', include(newApi.urls)),
 
     # URLs del frontal web    
     (r'^nodes(?:|/)$', listNodes),
