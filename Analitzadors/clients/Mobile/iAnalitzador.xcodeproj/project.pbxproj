@@ -26,10 +26,12 @@
 		A15EB9DB1512B78600AB4D1B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A15EB9B11512B78600AB4D1B /* Foundation.framework */; };
 		A15EB9E31512B78600AB4D1B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A15EB9E11512B78600AB4D1B /* InfoPlist.strings */; };
 		A15EB9E61512B78700AB4D1B /* iAnalitzadorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A15EB9E51512B78700AB4D1B /* iAnalitzadorTests.m */; };
+		A16B6B1C190DB9A100D2F2E7 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A16B6B1A190DB9A100D2F2E7 /* MainStoryboard.storyboard */; };
+		A16B6B20190DC96600D2F2E7 /* HistoryRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A16B6B1F190DC96600D2F2E7 /* HistoryRequest.m */; };
+		A16B6B23190DD6D600D2F2E7 /* HistoricTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A16B6B22190DD6D600D2F2E7 /* HistoricTableViewController.m */; };
 		A17F16C11806165D00828202 /* ConfigFieldViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A17F16C01806165D00828202 /* ConfigFieldViewController.m */; };
 		A1813D3918D3CA1C00641B7E /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1813D3818D3CA1C00641B7E /* Media.xcassets */; };
 		A1871B3015C75A8800935345 /* ConfigViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1871B2E15C75A8700935345 /* ConfigViewController.m */; };
-		A198302A15AE457900A434D9 /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A198302815AE457900A434D9 /* MainStoryboard.storyboard */; };
 		A198303715AF937500A434D9 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A198303615AF937500A434D9 /* CoreData.framework */; };
 		A1A9484915929CCF0069C304 /* ClientLector.m in Sources */ = {isa = PBXBuildFile; fileRef = A1A9484815929CCF0069C304 /* ClientLector.m */; };
 		A1A9484A15929CCF0069C304 /* ClientLector.m in Sources */ = {isa = PBXBuildFile; fileRef = A1A9484815929CCF0069C304 /* ClientLector.m */; };
@@ -85,12 +87,16 @@
 		A15EB9E21512B78600AB4D1B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A15EB9E41512B78600AB4D1B /* iAnalitzadorTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = iAnalitzadorTests.h; sourceTree = "<group>"; };
 		A15EB9E51512B78700AB4D1B /* iAnalitzadorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = iAnalitzadorTests.m; sourceTree = "<group>"; };
+		A16B6B1B190DB9A100D2F2E7 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
+		A16B6B1E190DC96600D2F2E7 /* HistoryRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryRequest.h; sourceTree = "<group>"; };
+		A16B6B1F190DC96600D2F2E7 /* HistoryRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HistoryRequest.m; sourceTree = "<group>"; };
+		A16B6B21190DD6D600D2F2E7 /* HistoricTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoricTableViewController.h; sourceTree = "<group>"; };
+		A16B6B22190DD6D600D2F2E7 /* HistoricTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HistoricTableViewController.m; sourceTree = "<group>"; };
 		A17F16BF1806165D00828202 /* ConfigFieldViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigFieldViewController.h; sourceTree = "<group>"; };
 		A17F16C01806165D00828202 /* ConfigFieldViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfigFieldViewController.m; sourceTree = "<group>"; };
 		A1813D3818D3CA1C00641B7E /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		A1871B2D15C75A8700935345 /* ConfigViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigViewController.h; sourceTree = "<group>"; };
 		A1871B2E15C75A8700935345 /* ConfigViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfigViewController.m; sourceTree = "<group>"; };
-		A198302915AE457900A434D9 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
 		A198303615AF937500A434D9 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		A1A9484715929CCF0069C304 /* ClientLector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientLector.h; sourceTree = "<group>"; };
 		A1A9484815929CCF0069C304 /* ClientLector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClientLector.m; sourceTree = "<group>"; };
@@ -130,8 +136,8 @@
 		A107BBF1159BB98A00674DE1 /* Storyboards */ = {
 			isa = PBXGroup;
 			children = (
+				A16B6B1A190DB9A100D2F2E7 /* MainStoryboard.storyboard */,
 				A1291D411808B93B000EF24D /* MainStoryboardiPad.storyboard */,
-				A198302815AE457900A434D9 /* MainStoryboard.storyboard */,
 			);
 			name = Storyboards;
 			sourceTree = "<group>";
@@ -157,6 +163,8 @@
 				A17F16C01806165D00828202 /* ConfigFieldViewController.m */,
 				A1C92CCF18077B68005D13F4 /* ConfigCell.h */,
 				A1C92CD018077B68005D13F4 /* ConfigCell.m */,
+				A16B6B21190DD6D600D2F2E7 /* HistoricTableViewController.h */,
+				A16B6B22190DD6D600D2F2E7 /* HistoricTableViewController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -170,6 +178,8 @@
 				A1A9484D1593D63E0069C304 /* TeslaClient.m */,
 				A11E3B5B17FF823E00FB6F85 /* Configurador.h */,
 				A11E3B5C17FF823E00FB6F85 /* Configurador.m */,
+				A16B6B1E190DC96600D2F2E7 /* HistoryRequest.h */,
+				A16B6B1F190DC96600D2F2E7 /* HistoryRequest.m */,
 			);
 			name = Propies;
 			sourceTree = "<group>";
@@ -210,6 +220,7 @@
 		A15EB9B51512B78600AB4D1B /* iAnalitzador */ = {
 			isa = PBXGroup;
 			children = (
+				A16B6B1D190DBB1100D2F2E7 /* iPad */,
 				A17F16BB180612D400828202 /* Olds */,
 				A10A16DE15AE237500BA4574 /* Propies */,
 				A10A16DD15AE235700BA4574 /* Controllers */,
@@ -249,6 +260,13 @@
 				A15EB9E11512B78600AB4D1B /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		A16B6B1D190DBB1100D2F2E7 /* iPad */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = iPad;
 			sourceTree = "<group>";
 		};
 		A17F16BB180612D400828202 /* Olds */ = {
@@ -334,7 +352,7 @@
 			files = (
 				A15EB9BA1512B78600AB4D1B /* InfoPlist.strings in Resources */,
 				A1291D421808B93B000EF24D /* MainStoryboardiPad.storyboard in Resources */,
-				A198302A15AE457900A434D9 /* MainStoryboard.storyboard in Resources */,
+				A16B6B1C190DB9A100D2F2E7 /* MainStoryboard.storyboard in Resources */,
 				A1813D3918D3CA1C00641B7E /* Media.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -374,9 +392,11 @@
 				A17F16C11806165D00828202 /* ConfigFieldViewController.m in Sources */,
 				A11E3B5717FE642300FB6F85 /* EquipTabBar.m in Sources */,
 				A15EB9C01512B78600AB4D1B /* AppDelegate.m in Sources */,
+				A16B6B23190DD6D600D2F2E7 /* HistoricTableViewController.m in Sources */,
 				A11E3B60180052A100FB6F85 /* EquipViewController.m in Sources */,
 				A1C92CD118077B68005D13F4 /* ConfigCell.m in Sources */,
 				A1A9484915929CCF0069C304 /* ClientLector.m in Sources */,
+				A16B6B20190DC96600D2F2E7 /* HistoryRequest.m in Sources */,
 				A1A9484E1593D63E0069C304 /* TeslaClient.m in Sources */,
 				A10C1F0E159A7C4700E9D854 /* HistoricViewController.m in Sources */,
 				A1871B3015C75A8800935345 /* ConfigViewController.m in Sources */,
@@ -424,10 +444,10 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		A198302815AE457900A434D9 /* MainStoryboard.storyboard */ = {
+		A16B6B1A190DB9A100D2F2E7 /* MainStoryboard.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				A198302915AE457900A434D9 /* en */,
+				A16B6B1B190DB9A100D2F2E7 /* en */,
 			);
 			name = MainStoryboard.storyboard;
 			sourceTree = "<group>";
@@ -488,7 +508,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iAnalitzador/iAnalitzador-Prefix.pch";
 				INFOPLIST_FILE = "iAnalitzador/iAnalitzador-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
@@ -505,7 +525,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "iAnalitzador/iAnalitzador-Prefix.pch";
 				INFOPLIST_FILE = "iAnalitzador/iAnalitzador-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",

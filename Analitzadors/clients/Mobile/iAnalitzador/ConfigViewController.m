@@ -7,7 +7,7 @@
 //
 
 #import "ConfigViewController.h"
-#import "ConfigFieldViewController.h"
+//#import "ConfigFieldViewController.h"
 #import "ConfigCell.h"
 
 #import "Configurador.h"

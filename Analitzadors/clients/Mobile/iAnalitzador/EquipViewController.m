@@ -137,8 +137,6 @@
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
     NSString *keyVar = [[dataDisplays allKeys] objectAtIndex:section];
-    
-    
     NSDictionary *varDef = [varDefs objectForKey: keyVar];
     return [varDef valueForKey: @"descripcio"];
 }
@@ -149,7 +147,6 @@
 {
     NSString *keyVar = [[dataDisplays allKeys] objectAtIndex:section];
     NSArray *dataVar = [dataDisplays objectForKey: keyVar];
-    
     return [dataVar count];
 }
 

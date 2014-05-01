@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 #import "TeslaClient.h"
+#import "HistoryRequest.h"
+
+static NSCache *defsCache;
+static NSCache *nodesCache;
 
 @interface Configurador : NSObject {
     NSString *urlWS;
@@ -19,11 +23,13 @@
     NSMutableArray* listNodes;
     
     TeslaClient* tc;
+    HistoryRequest* request;
     
     @private
     time_t lastReadNodes;
 }
 
+@property (nonatomic, retain) HistoryRequest *request;
 @property (nonatomic, retain) NSString *urlWS;
 @property (nonatomic, retain) NSString *idNode;
 @property (nonatomic, retain) NSString *idEquip;
@@ -35,5 +41,6 @@
 - (id)loadNodes: (NSError**)outError;
 - (id)getDefinitions: (NSError**)outError;
 - (id)getVariables: (NSError**)outError;
+- (id)loadHistory: (NSError**)outError;
 
 @end

@@ -61,7 +61,7 @@
 
 -(id)loadDefinitions: (NSString*)idNode idEquip: (NSString*)idEquip returnedError:(NSError**)outError
 {
-    [request setURL: [NSURL URLWithString:[NSString stringWithFormat: @"%@/central/ws/rt/get/Defs/%@/%@", baseURL, idNode, idEquip]]];
+    [request setURL: [NSURL URLWithString:[NSString stringWithFormat: @"%@/ws/v2/lector/get/Defs/%@/%@", baseURL, idNode, idEquip]]];
     [request setHTTPMethod:@"GET" ];
     
     NSHTTPURLResponse* urlResponse = nil;
@@ -91,7 +91,7 @@
 
 -(id)getVariables: (NSString*)idNode idEquip: (NSString*)idEquip returnedError:(NSError**)outError
 {
-    [request setURL: [NSURL URLWithString:[NSString stringWithFormat: @"%@/central/ws/rt/get/Vars/%@/%@", baseURL, idNode, idEquip]]];
+    [request setURL: [NSURL URLWithString:[NSString stringWithFormat: @"%@/ws/v2/lector/get/Vars/%@/%@", baseURL, idNode, idEquip]]];
     [request setHTTPMethod:@"GET" ];
     
     NSHTTPURLResponse* urlResponse = nil;
@@ -120,11 +120,42 @@
     return nil;
 }
 
-// /central/ws/history/load/
-
-- (id) loadHistory: (NSError**)outError
+- (id) loadHistory: (NSString*)idNode idEquip: (NSString*)idEquip variable: (NSString*) varName dateFrom: (NSDate*) dateFrom dateTo: (NSDate*) dateTo returnedError: (NSError**)outError
 {
-    outError = nil;
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"dd-MM-yyyy"];
+    
+    [request setURL: [NSURL URLWithString:[NSString stringWithFormat: @"%@/ws/v2/history/load/%@/%@/%@/%@/%@/?format=json",
+                                           baseURL,
+                                           idNode,
+                                           idEquip,
+                                           varName,
+                                           [dateFormatter stringFromDate:dateFrom],
+                                           [dateFormatter stringFromDate:dateTo]]]];
+    [request setHTTPMethod:@"GET" ];
+    
+    NSHTTPURLResponse* urlResponse = nil;
+    NSData *responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&urlResponse error:outError];
+    
+    if ([urlResponse statusCode] >= 200 && [urlResponse statusCode] < 300)
+    {
+        NSError *errorSerialization = [[NSError alloc] init];
+        
+        id jsonObject = [NSJSONSerialization
+                         JSONObjectWithData:responseData
+                         options:kNilOptions
+                         error:&errorSerialization];
+        
+        BOOL isValid = [NSJSONSerialization isValidJSONObject:jsonObject];
+        if (!isValid)
+        {
+            *outError = errorSerialization;
+            NSLog(@"loadHistory serialization error: %@", [errorSerialization localizedDescription]);
+            return nil;
+        }
+        
+        return jsonObject;
+    }
     
     return nil;
 }

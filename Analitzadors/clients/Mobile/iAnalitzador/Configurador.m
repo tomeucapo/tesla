@@ -10,7 +10,7 @@
 
 @implementation Configurador
 
-@synthesize nomNode, idEquip, idNode, lastDefinitions, listNodes, urlWS;
+@synthesize nomNode, idEquip, idNode, lastDefinitions, listNodes, urlWS, request;
 
 #pragma mark Singleton Methods
 
@@ -31,6 +31,10 @@
         urlWS = @"http://tesla.grupcerda.es";
         
         tc = [[TeslaClient alloc] init: urlWS];
+        request = [[HistoryRequest alloc] init];
+        
+        defsCache = [[NSCache alloc] init];
+        nodesCache = [[NSCache alloc] init];
     }
     return self;
 }
@@ -57,32 +61,35 @@
 {
       NSString *keyDefs = [NSString stringWithFormat:@"%@-%@", self.idNode, self.idEquip];
     
-      if([lastDefinitions objectForKey: keyDefs] != nil)
-          return [lastDefinitions objectForKey: keyDefs];
+      if([defsCache objectForKey: keyDefs] != nil)
+          return [defsCache objectForKey: keyDefs];
     
-      id defs = [tc loadDefinitions:self.idNode idEquip:self.idEquip returnedError:outError];
-    
+      id defs = [tc loadDefinitions:self.idNode idEquip:self.idEquip returnedError: outError];
       if (!defs)
-          return nil;
+         return nil;
     
-      NSDictionary* lastDef = [NSDictionary dictionaryWithObject:defs forKey:keyDefs];
-      [lastDefinitions addEntriesFromDictionary: lastDef];
+      [defsCache setObject: defs forKey: keyDefs];
     
-      if (defs)
-          return defs;
-    
-      return nil;
+      return defs;
 }
 
 -(id)getVariables: (NSError**)outError
 {
-    id vars = [tc getVariables:self.idNode idEquip:self.idEquip returnedError:outError];
-    
-    if (vars)
-        return vars;
-    
-    return nil;
+      return [tc getVariables:self.idNode idEquip:self.idEquip returnedError:outError];
 }
+
+
+-(id)loadHistory: (NSError**)outError
+{
+    NSDictionary* data = [tc loadHistory:self.idNode idEquip: self.idEquip
+                                variable:request.variable
+                                dateFrom:request.fromDate
+                                  dateTo:request.toDate
+                            returnedError:outError];
+    
+    return [data objectForKey:@"ResultSet"];
+}
+
 
 - (void)dealloc {
     // Should never be called, but just here for clarity really.
