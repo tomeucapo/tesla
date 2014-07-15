@@ -1,34 +1,39 @@
 # Django settings for gestioEnergetica project.
 
 import os
+from ConfigParser import RawConfigParser
+
+config = RawConfigParser()
+config.read("Teslaweb.ini")
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
+     ('Tomeu Capo', 'tomeucapo@me.com'),
 )
 
 MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-                'ENGINE': 'django.db.backends.postgresql_psycopg2',           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-                'NAME': 'gestEnergia',             # Or path to database file if using sqlite3.
-                'USER': 'gestener',             # Not used with sqlite3.
-                'PASSWORD': 'g3st3n3r',         # Not used with sqlite3.
-                'HOST': 'bedb2.gcs',             # Set to empty string for localhost. Not used with sqlite3.
-                'PORT': ''             # Set to empty string for default. Not used with sqlite3.
+                'ENGINE': 'django.db.backends.mysql',  
+                'NAME': config.get('database','name'),
+                'USER': config.get('database','user'),
+                'PASSWORD': config.get('database','password'),
+                'HOST': config.get('database','host'),
+                'PORT': ''           
                }
 }
 
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211',
+        'LOCATION': config.get('memcache','host'),
     },
     'resources': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211',
+        'LOCATION': config.get('memcache','host'),
     }
 }
 
@@ -51,7 +56,7 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = '/var/www/apps/gestioEnergetica/media/'
+MEDIA_ROOT = config.get('general','media_root')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).

@@ -1,11 +1,11 @@
 import os
 import sys
 
-path = '/var/www/apps/gestioEnergetica'
+path = '/var/pywww/tesla'
 if path not in sys.path:
     sys.path.append(path)
 
-path = '/var/www/apps'
+path = '/var/pywww'
 if path not in sys.path:
     sys.path.append(path)
 
