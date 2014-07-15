@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, include, url
 
 from lectures.views import *
 from lectures.calculs import *
@@ -26,7 +26,7 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
     
     # URL del webservice
-    (r'^central/ws/', include('gestioEnergetica.ws.urls')),
+    (r'^central/ws/', include('teslaweb.ws.urls')),
 
     # URLs del webservice v2
     (r'^ws/', include(newApi.urls)),
