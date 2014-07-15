@@ -101,13 +101,13 @@ TEMPLATE_DIRS = (
     os.path.join(os.path.dirname(__file__), 'templates'),
 )
 
-ROOT_URLCONF = 'gestioEnergetica.urls'
+ROOT_URLCONF = 'teslaweb.urls'
 
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
-    'gestioEnergetica.lectures',
-    'django.contrib.admin'
+    'django.contrib.admin',
+    'teslaweb.lectures',
 )
