@@ -8,7 +8,7 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 
-from lectures.models import Node, NodeAnalitzador, Analitzador, Lectura, LecturaParametre, Parametre 
+from teslaweb.lectures.models import Node, NodeAnalitzador, Analitzador, Lectura, LecturaParametre, Parametre 
 
 def inici(request):
     data = {"method": request.method,

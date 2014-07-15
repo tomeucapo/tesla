@@ -10,7 +10,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 
 
-from lectures.models import Node, NodeAnalitzador, Analitzador, Lectura, LecturaParametre, Parametre, FranjaHoraria
+from teslaweb.lectures.models import Node, NodeAnalitzador, Analitzador, Lectura, LecturaParametre, Parametre, FranjaHoraria
 
 #from datetime import datetime , date, time
 import time

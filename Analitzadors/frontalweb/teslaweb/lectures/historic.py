@@ -10,7 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from datetime import datetime, date, time
 
-from lectures.models import Node, NodeAnalitzador, Analitzador, Lectura, LecturaParametre, Parametre 
+from teslaweb.lectures.models import Node, NodeAnalitzador, Analitzador, Lectura, LecturaParametre, Parametre 
 
 
 def consulta(request):

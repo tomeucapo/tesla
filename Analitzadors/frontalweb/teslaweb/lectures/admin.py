@@ -1,4 +1,4 @@
-from gestioEnergetica.lectures.models import * 
+from teslaweb.lectures.models import * 
 from django.contrib import admin
 
 class ParametreInline(admin.TabularInline):
