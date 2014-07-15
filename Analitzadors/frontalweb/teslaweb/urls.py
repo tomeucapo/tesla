@@ -1,7 +1,6 @@
 from django.conf.urls import patterns, include, url
 
 from lectures.views import *
-from lectures.calculs import *
 
 from ws2.history import HistoryResource
 from ws2.lector import LectorResource
@@ -18,6 +17,8 @@ newApi.register(HistoryResource())
 newApi.register(LectorResource())
 
 urlpatterns = patterns('',
+
+    (r'^$', 'teslaweb.lectures.views.inici'),
 
     # URLs referents al contingut estatic (No funciona amb Apache)
     (r'^static/js/(?P<path>.*)$', 'django.views.static.serve', {'document_root': os.path.join(settings.MEDIA_ROOT, "js") }),
@@ -37,8 +38,7 @@ urlpatterns = patterns('',
     (r'^node/(?P<nodeId>[^/]+)/analizers$', listAnalizers),
     (r'^parametres/(?P<analizerId>[^/]+)$', listParametres),
     
-    (r'^costs/(?P<nodeAnalitzadorId>[^/]+)/(?P<dataInici>[^/]+)/(?P<dataFi>[^/]+)$', 'lectures.calculs.costsTarifes'),
-    (r'^costs$', 'lectures.calculs.inici'),
-    (r'^visor$', 'lectures.views.realTime'),
-    (r'^$', 'lectures.views.inici'),
+    (r'^costs/(?P<nodeAnalitzadorId>[^/]+)/(?P<dataInici>[^/]+)/(?P<dataFi>[^/]+)$', 'teslaweb.lectures.calculs.costsTarifes'),
+    (r'^costs$', 'teslaweb.lectures.calculs.inici'),
+    (r'^visor$', realTime),
 )
