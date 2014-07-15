@@ -50,13 +50,13 @@ def costsTarifes(request, dataInici, dataFi, nodeAnalitzadorId):
     potFranjes = {}
     
     franjes = FranjaHoraria.objects.filter(tarifa__node__nodeanalitzador=nodeAnalitzadorId)
-    parTarifa = franjes[0].tarifa.parametre
 
     if len(franjes) == 0:
        retval.status_code = 404
        retval.write("Ho ni ha franjes horaries definides per aquest analitzador!")
        return retval
 
+    parTarifa = franjes[0].tarifa.parametre
     dataIniciL = datetime.strptime(dataInici+" 00:00:00", "%d-%m-%Y %H:%M:%S")         
     dataFiL = datetime.strptime(dataFi+" 23:59:59", "%d-%m-%Y %H:%M:%S")
     
