@@ -14,7 +14,6 @@ from datetime import datetime
 import time, logging, logging.handlers
 import pickle, json
 
-logging.config.fileConfig("/var/pywww/tesla/logging.conf")
 
 class LectorResource(Resource):
 	class Meta:
@@ -29,7 +28,7 @@ class LectorResource(Resource):
 	def lector(self, request, **kwargs):
             self.method_check(request, allowed=['get'])
             self.throttle_check(request)
-            logger = logging.getLogger('ws.lector')
+            logger = logging.getLogger(__name__)
 
 	    try:
                analitzadorId = kwargs.pop("idAnalitzador")

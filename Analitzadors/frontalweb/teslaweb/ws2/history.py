@@ -15,8 +15,6 @@ from datetime import datetime
 import time, logging, logging.handlers
 import pickle, json
 
-logging.config.fileConfig("/var/pywww/tesla/logging.conf")
-
 class HistoryResource(Resource):
 	class Meta:
             cache = SimpleCache(varies=["Accept", "Cookie"])
@@ -31,7 +29,7 @@ class HistoryResource(Resource):
         def save(self, request, **kwargs):
             self.method_check(request, allowed=['post'])
             self.throttle_check(request)
-            logger = logging.getLogger('ws.history')
+            logger = logging.getLogger(__name__)
             
             try:
                   nodeId = kwargs.pop("idNode")
@@ -101,7 +99,7 @@ class HistoryResource(Resource):
 	def load(self, request, **kwargs):
             self.method_check(request, allowed=['get'])
             self.throttle_check(request)
-            logger = logging.getLogger('ws.history')
+            logger = logging.getLogger(__name__)
 
             varName = kwargs.pop('varName')
             di = datetime.strptime(kwargs.pop('dateFrom')+" 00:00:00", '%d-%m-%Y %H:%M:%S')
