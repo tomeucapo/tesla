@@ -4,7 +4,7 @@
 #
 # das8000.py
 # Classe que s'encarrega de realitzar consultes i tractar les dades
-# dels equips d'adquisició de dades de Desin DAS-8000
+# del DAS-8000 de Desin
 #
 # Tomeu Capó
 #
@@ -12,15 +12,7 @@
 import pickle, threading, hashlib, os, time
 from params import das8000Regs
 
-from modBusComm import READ_WORDS, REPOR_SLAVE, E_SND_ERROR, E_NOT_OPEN_COMM
-
-ERROR_MASK = {0x01: "Tensió de fase 1 fora de rang",
-              0x02: "Tensió de fase 2 fora de rang",
-              0x04: "Tensió de fase 3 fora de rang",
-              0x08: "Intensitat de fase 1 fora de rang",
-              0x08: "Intensitat de fase 2 fora de rang",
-              0x10: "Intensitat de fase 3 fora de rang",
-              0x20: "Freqüència fora de rang o tensió fase 1 insuficient per determinar la freqüencia",}
+from modBusComm import READ_WORDS, READ_E_WORDS, REPOR_SLAVE, E_SND_ERROR, E_NOT_OPEN_COMM
 
 class das8000:
     def __init__(self, devComm, vars, model):
@@ -36,9 +28,7 @@ class das8000:
         self.lastStatus = {}
         self.lectura = {}
         self.model = model
-
-        self.fileNameCache = hashlib.md5("%d:%s" % (self.id, self.model)).hexdigest()
-     
+        
         self.lastStatus = {}
         self.lastStatus["lastTime"] = 0
         if model in das8000Regs.tRegs.keys():
@@ -72,7 +62,7 @@ class das8000:
             #self.logger.debug("  %s:  %s" % (var, params["registre"]))
                     
             self.mutex.acquire()
-            if not self.devComm.enviar(READ_WORDS, params["registre"], params["numRegs"]):
+            if not self.devComm.enviar(READ_E_WORDS, params["registre"], params["numRegs"]):
                self.mutex.release()
                if self.devComm.lastError in [E_NOT_OPEN_COMM, E_SND_ERROR]:
                   self.logger.error("Error enviant, reiniciarem connexio del dispositiu") 
@@ -109,61 +99,72 @@ class das8000:
         return rebut  
 
     def clearCache(self):
-        if os.path.exists(self.fileNameCache):
-           os.unlink(self.fileNameCache)
-            
+        pass
+ 
     # Metode que ens torna el identificador del analitzador
     
     def identify(self):
+        """
         self.mutex.acquire()        
-        if not self.devComm.enviar(REPOR_SLAVE, 0, 0):
+        if not self.devComm.enviar(READ_E_WORDS, 1, 1):
            self.mutex.release()
            if self.devComm.lastError in [E_NOT_OPEN_COMM, E_SND_ERROR]:
               self.devComm.resetConnection()              
-              self.logger.error("Error enviant, reiniciarem connexio del dispositiu")               
+              self.logger.error("Error enviant, reiniciarem connexio del dispositiu")
+              self.logger.debug("No s'ha pogut enviar la trama")   
            return ''
         rebut = self.devComm.rebre()
         self.mutex.release()
-
+        """
+        rebut = '' 
         if not rebut:
            self.lastError = self.devComm.msgError()
            self.logger.error("%d: %s " % (self.devComm.lastError, self.devComm.msgError()))
-           return ''
-       
-        return self.devComm.lastResponseB[2:]
+           return 'DAS-8000 Ver. Unknown'
 
-    def getConfig(self):
-        self.logger.debug("Demanant configuracio i estat ... %d" % self.id)
+        return "DAS-8000 Ver. %d" % self.devComm.lastBigIntValue   
 
-        if os.path.exists(self.fileNameCache) and time.time() < os.path.getmtime(self.fileNameCache)+85000:
-           self.logger.debug("\tLlegint configuracio de la cache ... %s" % self.fileNameCache) 
-           fConfDrv = open(self.fileNameCache,"rb")
-           (self.idStr, self.rangs, self.lastStatus) = pickle.load(fConfDrv)
-           fConfDrv.close()
-           return self.idStr
-        
+    def getConfig(self):       
+        self.logger.debug("Demanant configuracio i estat ... %d" % self.id)       
         self.logger.debug("\tLlegint configuracio del dispositiu...")
         
-        self.idStr = retval = self.identify()
-        if not retval:
+        self.idStr = self.identify()
+        if not self.idStr:           
            return ''
-        
-        self.status()
-        self.loadRanges()
-
-        self.logger.debug("\tGuardant configuracio del dispositiu a la cache...")
-        fConfDrv = open(self.fileNameCache,"wb")
-        pickle.dump((retval, self.rangs, self.lastStatus), fConfDrv, pickle.HIGHEST_PROTOCOL)
-        fConfDrv.close()
-
-        return(retval)
+                
+        return self.idStr
 
     def status(self):
-        # TODO: Needs get status from device
-        self.lastStatus["lastTime"] = time.time()
-            
+        pass
+        """
+        for statVar in ["HMU", "ERR"]:
+            try:
+                params = pmRegs.tRegs[self.model][statVar]
+            except KeyError, e:
+                raise KeyError, "Aquest driver de %s no te configurat el parametre %s" % (self.model, statVar)
+                
+            self.mutex.acquire()
+            if not self.pmComm.enviar(READ_WORDS, params["registre"], params["numRegs"]):
+               self.mutex.release()
+               if self.pmComm.lastError in [E_NOT_OPEN_COMM, E_SND_ERROR]:
+                  self.logger.error("Error enviant, reiniciarem connexio del dispositiu") 
+                  self.pmComm.resetConnection()                
+               continue
+       
+            rebut = self.pmComm.rebre()
+            self.mutex.release()            
+
+            if rebut:
+               self.lastStatus[statVar] = self.pmComm.lastBigIntValue if params["compost"] else self.pmComm.lastResponse
+               if statVar == 'ERR':
+                  self.lastStatus["ERR_MSG"] = self.getErrorMessage()
+                            
+               self.lastStatus["lastTime"] = time.time()
+        """    
         
     def loadRanges(self):
+        pass
+        """
         peticionsRng = {}
         for var in self.variables:
             if self.regsQuery[var]["regEscala"] in self.regsQuery:
@@ -175,19 +176,18 @@ class das8000:
             self.rangs[pt] = 0
 
             self.mutex.acquire()
-            if not self.devComm.enviar(READ_WORDS, params["registre"], params["numRegs"]):
+            if not self.pmComm.enviar(READ_WORDS, params["registre"], params["numRegs"]):
                self.mutex.release()
-               if self.devComm.lastError in [E_NOT_OPEN_COMM, E_SND_ERROR]:
+               if self.pmComm.lastError in [E_NOT_OPEN_COMM, E_SND_ERROR]:
                   self.logger.error("Error enviant, reiniciarem connexio del dispositiu") 
-                  self.devComm.resetConnection()                
+                  self.pmComm.resetConnection()                
                continue
        
-            if self.devComm.rebre():
-               marcaEscala = str(self.devComm.lastResponse[0])
-               if das8000Regs.factorEscala.get(marcaEscala):
-                  self.rangs[pt] = das8000Regs.factorEscala[marcaEscala]
+            if self.pmComm.rebre():
+               self.rangs[pt] = pmRegs.factorEscala[str(self.pmComm.lastResponse[0])]
             self.mutex.release()
-
+        """
+        
     def getErrorMessage(self):
         if not self.lastStatus.get("ERR"):
            return 'NO_ERROR'

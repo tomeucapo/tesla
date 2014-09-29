@@ -2,16 +2,12 @@
 
 tRegs = {
         "DAS8000": { 
-          "SRO":  {"registre"  : 0, 
-                   "numRegs"   : 1, 
-                   "descripcio": "Status Remote Digital Outputs", 
+          "AMC":  {"registre"  : 2, 
+                   "numRegs"   : 8, 
+                   "descripcio": "Analog measurement channel", 
                    "regEscala" : "", 
-                   "valEscala" : 0, 
-                   "valMax"    : 0, 
+                   "valEscala" : 0.1, 
+                   "valMax"    : 9999, 
                    "compost"   : False},
-
-      
         }
 }
-
-factorEscala = {}

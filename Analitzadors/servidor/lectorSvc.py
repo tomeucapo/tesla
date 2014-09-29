@@ -4,7 +4,8 @@
 import win32service, win32serviceutil, win32api, win32con, win32event, win32evtlogutil
 import os, sys, logging, logging.handlers
 import ConfigParser
-     
+import servicemanager
+
 from lectorSrv import *
 
 LEVELS = {'debug':    logging.DEBUG,
@@ -16,7 +17,7 @@ LEVELS = {'debug':    logging.DEBUG,
 class lectorService(win32serviceutil.ServiceFramework):
    
    _svc_name_ = "lector"
-   _svc_display_name_ = "Servidor de lectures 3.0"
+   _svc_display_name_ = "Servidor de lectures 3.1"
    _svc_description_ = u"Sistema de monitoritzacio de mesures electriques"
          
    def __init__(self, args):
