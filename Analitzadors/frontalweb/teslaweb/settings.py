@@ -18,7 +18,7 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-                'ENGINE': 'django.db.backends.mysql',  
+                'ENGINE': 'django.db.backends.postgresql_psycopg2',  
                 'NAME': config.get('database','name'),
                 'USER': config.get('database','user'),
                 'PASSWORD': config.get('database','password'),
@@ -92,7 +92,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware'
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware'
 )
 
 WSGI_APPLICATION = 'teslaweb.wsgi.application'

@@ -27,7 +27,7 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
     
     # URL del webservice
-    (r'^central/ws/', include('teslaweb.ws.urls')),
+    #(r'^central/ws/', include('teslaweb.ws.urls')),
 
     # URLs del webservice v2
     (r'^ws/', include(newApi.urls)),

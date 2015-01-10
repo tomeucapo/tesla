@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, url 
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 from tastypie.utils import trailing_slash
 from tastypie.resources import Resource
