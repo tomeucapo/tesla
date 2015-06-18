@@ -1,16 +1,20 @@
 #!/usr/bin/python
 
 import time
-from PyQt4.QtCore import *
+from PyQt5.QtCore import *
 from api.client import *
 
 REFRESH_TIME=5
 
 class clientThread(QThread): 
+    pintaVars = pyqtSignal(int)
+    pintaEstat = pyqtSignal(int)
+    showMsgStatus = pyqtSignal(str)
+    avis = pyqtSignal(str)
+
     def __init__(self, ui, addr):
         QThread.__init__(self)
         self.values = {}
-        #self.vars = []
         self.ui = ui
         self.seguir = True
         self.connectat = False
@@ -27,16 +31,16 @@ class clientThread(QThread):
 
         (estatLector, estatComm) = self.cliLector.getStatus(idEquip)
 
-        self.ui.statusbar.showMessage("Llegint ID de %d ..." % idEquip)
+        self.showMsgStatus.emit("Llegint ID de %d ..." % idEquip)
         idEquipStr = self.cliLector.getId(idEquip).rstrip()
         
         if not idEquipStr or idEquipStr == "INT_ERR":
-           self.ui.statusbar.showMessage("No connectat ...")
+           self.showMsgStatus.emit("No connectat ...")
            return False
-                
-        self.ui.statusbar.showMessage("Llegint definicions de %d ..." % idEquip)
+         
+        self.showMsgStatus.emit("Llegint definicions de %d ..." % idEquip)
         defs = self.cliLector.getDefs(idEquip)
-        self.ui.statusbar.showMessage("Llegint variables de %d ..." % idEquip)
+        self.showMsgStatus.emit("Llegint variables de %d ..." % idEquip)
         try:
             vars = self.cliLector.getVars(idEquip)["values"]
             lastRead = self.cliLector.getVars(idEquip)["lastRead"]
@@ -46,14 +50,14 @@ class clientThread(QThread):
         return True
     
     def connectar(self):
-        self.ui.statusbar.showMessage("Connectant amb %s:%d ..." % self.addr)
+        self.showMsgStatus.emit("Connectant amb %s:%d ..." % self.addr)
         try: 
            self.cliLector = ctrlLector(self.addr)
            self.connectat = True
         except Exception, err:
            raise
 
-        self.ui.statusbar.showMessage("Llegint configuracio del servidor ...")
+        self.showMsgStatus.emit("Llegint configuracio del servidor ...")
         self.conf = self.cliLector.getConf()
 
         equips = self.conf.get("equips")
@@ -69,16 +73,16 @@ class clientThread(QThread):
            self.tempsRefresc = int(tl/len(equips.keys()))/2
 
         if self.cliLector.connectat:
-           self.ui.statusbar.showMessage("Servidor de lectures actiu ...")
+           self.showMsgStatus.emit("Servidor de lectures actiu ...")
            self.ui.actionConnectar.setEnabled(0)
            #self.emit(SIGNAL("defColsHist()"))
            for id, values in self.values.iteritems():
-               self.emit(SIGNAL("pintaEstat(int)"), id)
+               self.pintaEstat.emit(id)
                if values["estatLector"] == STA_PAUSED:
                   self.ui.actionIniciar.setEnabled(1)
                   break
         else:
-           self.ui.statusbar.showMessage("Servidor de lectures actiu i esperant ...")
+           self.showMsgStatus.emit("Servidor de lectures actiu i esperant ...")
            self.ui.actionConnectar.setEnabled(1)
            self.ui.actionIniciar.setEnabled(1)
 
@@ -97,7 +101,8 @@ class clientThread(QThread):
                print "Possant en pausa: ", id
                self.cliLector.pause(id)
                (self.values[id]["estatLector"], self.values[id]["estatComm"]) = self.cliLector.getStatus(id)
-               self.emit(SIGNAL("pintaEstat(int)"), id)
+               self.pintaEstat.emit(id)
+               #emit(SIGNAL("pintaEstat(int)"), id)
       
     def run(self):
         print "Thread running ..."
@@ -109,16 +114,15 @@ class clientThread(QThread):
                         if self.values[id]["estatLector"] == STA_STARTED and self.values[id]["estatComm"] == STA_COMM:
                            self.values[id]["vars"] = self.cliLector.getVars(id)["values"]
                            self.values[id]["lastRead"] = self.cliLector.getVars(id)["lastRead"]
-                           self.emit(SIGNAL("pintaVars(int)"), id)
+                           self.pintaVars.emit(id)             
                   except socket.error, e:
-                        self.emit(SIGNAL("avis(string)"), str(e)) 
+                        self.avis.emit(str(e))
                         self.seguir=false                      
                   except Exception, e:
                         k=10
                         print "Error: ",str(e)
                   else:
-                        self.emit(SIGNAL("pintaEstat(int)"), id)
-                  
+                        self.pintaEstat.emit(id)
               self.sleep(self.tempsRefresc+k)
 
         self.cliLector.desconnecta()

@@ -1,17 +1,17 @@
 #!/usr/bin/python
 
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 from ui.frmConfiguracioSrv import Ui_configuracio
 from api.client import *
 
-class Configuracio(QtGui.QDialog):
+class Configuracio(QtWidgets.QDialog):
       defaults = {"ipServidor":   "127.0.0.1",
                   "portServidor": 50007, "dirExport": ""}
 
       cliThr = None
       
       def __init__(self):
-          QtGui.QDialog.__init__(self)
+          QtWidgets.QDialog.__init__(self)
 
           self.pucGuardar = False
           self.ui = Ui_configuracio()
@@ -22,32 +22,34 @@ class Configuracio(QtGui.QDialog):
              for key in self.defaults.keys():
                   self.settings.setValue(key, QtCore.QVariant(self.defaults[key]))
           
-          self.connect(self.ui.bProvar, QtCore.SIGNAL("clicked()"), self.onCmdTest)
-          self.ipServer = str(self.settings.value("ipServidor").toString())
+          self.ui.bProvar.clicked.connect(self.onCmdTest)
+          #self.connect(self.ui.bProvar, QtCore.SIGNAL("clicked()"), self.onCmdTest)
+
+          self.ipServer = str(self.settings.value("ipServidor")) #.toString())
 
       def onCmdTest(self):
           try:
              ipServer = str(self.ui.cAddrServidor.displayText())
-             portServer = int(self.settings.value("portServidor").toString())      
+             portServer = int(self.settings.value("portServidor")) #.toString())      
              
              cliTest = ctrlLector( (ipServer, portServer) )
-             QtGui.QMessageBox.information(self, self.tr("Info clientThread"), u"Connectat correctament al servei Lector %s" % ipServer)
+             QtWidgets.QMessageBox.information(self, self.tr("Info clientThread"), u"Connectat correctament al servei Lector %s" % ipServer)
              self.pucGuardar = True
           except Exception, err:
-             QtGui.QMessageBox.critical(self,self.tr("Error al connectar"), str(err))
+             QtWidgets.QMessageBox.critical(self,self.tr("Error al connectar"), str(err))
              self.pucGuardar = False
              
       def guardar(self):
           if self.pucGuardar:
              self.settings.setValue("ipServidor", QtCore.QVariant(str(self.ui.cAddrServidor.displayText())))
           else:
-             QtGui.QMessageBox.warning(self, self.tr("Alerta"),"No es guardara la direccio del nou servidor per que no funciona")
+             QtWidgets.QMessageBox.warning(self, self.tr("Alerta"),"No es guardara la direccio del nou servidor per que no funciona")
 
       def carregar(self):
-          self.ui.cAddrServidor.setText(self.settings.value("ipServidor").toString())
+          self.ui.cAddrServidor.setText(self.settings.value("ipServidor")) #.toString())
        
           if self.cliThr is None or not self.cliThr.connectat:
-             QtGui.QMessageBox.warning(self, self.tr("Alerta"), "No es pot llegir la configuracio del servidor per\nper que no estam connectats!")
+             QtWidgets.QMessageBox.warning(self, self.tr("Alerta"), "No es pot llegir la configuracio del servidor per\nper que no estam connectats!")
              return
 
           equips = self.cliThr.conf['equips']
@@ -64,11 +66,11 @@ class Configuracio(QtGui.QDialog):
                  cfgEquip[idDevice].append(cnfEquip)
 
           for idDevice, cnfDevice in devices.iteritems():              
-              rootDevice = QtGui.QTreeWidgetItem(["%s:%s" % (idDevice, cnfDevice['config']['port']), ""])
+              rootDevice = QtWidgets.QTreeWidgetItem(["%s:%s" % (idDevice, cnfDevice['config']['port']), ""])
               
               for equip in cfgEquip[idDevice]:
                    config = equip['config']['params']
-                   item = QtGui.QTreeWidgetItem(rootDevice, ["%s %s" % (config['fabricant'], config['model']),""])
+                   item = QtWidgets.QTreeWidgetItem(rootDevice, ["%s %s" % (config['fabricant'], config['model']),""])
               
               self.ui.treeDevices.insertTopLevelItem(0, rootDevice)
               self.ui.treeDevices.expandAll()

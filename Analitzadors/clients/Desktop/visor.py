@@ -11,7 +11,7 @@
 # Use under terms of GNU public licence.
 
 import time, sys, os
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui
 
 # Moduls especifics de l'aplicació
 
@@ -27,9 +27,9 @@ from ui.frmPrincipal import Ui_finestraPrincipal
 ################################################################################
 # Visor GUI
 
-class Visor(QtGui.QMainWindow):
+class Visor(QtWidgets.QMainWindow):
     def __init__(self):
-        QtGui.QMainWindow.__init__(self)
+        QtWidgets.QMainWindow.__init__(self)
 
         self.visors = {}
         self.grafiques = {}
@@ -46,17 +46,16 @@ class Visor(QtGui.QMainWindow):
 
         self.dConfig = Configuracio()
 
-        self.connect(self.ui.actionConnectar, SIGNAL("triggered()"), self.onCmdConnectar)
-        self.connect(self.ui.actionDesconnectar, SIGNAL("triggered()"), self.onCmdDesconnectar)
-        self.connect(self.ui.actionIniciar, SIGNAL("triggered()"), self.onCmdIniciar)
+        self.ui.actionConnectar.triggered.connect( self.onCmdConnectar )
+        self.ui.actionDesconnectar.triggered.connect( self.onCmdDesconnectar )
+        self.ui.actionIniciar.triggered.connect( self.onCmdIniciar )
+        self.ui.actionExportaGrafiques.triggered.connect( self.onCmdExportarGrafiques ) 
+        self.ui.actionSobre_el_programa.triggered.connect( self.onCmdAbout )
+        self.ui.actionConfiguracio.triggered.connect( self.onCmdConfiguracio )
+        self.ui.actionAturar.triggered.connect( self.onCmdPausar )
 
-        self.connect(self.ui.actionExportaGrafiques, SIGNAL("triggered()"), self.onCmdExportarGrafiques)
-        self.connect(self.ui.actionSobre_el_programa, SIGNAL("triggered()"), self.onCmdAbout)
-        self.connect(self.ui.actionConfiguracio, SIGNAL("triggered()"), self.onCmdConfiguracio)
-
-        self.connect(self.ui.actionIniciar, SIGNAL("triggered()"), self.onCmdIniciar)
-        self.connect(self.ui.actionAturar, QtCore.SIGNAL("triggered()"), self.onCmdPausar) 
-        self.connect(self.ui.arbreAnalitzadors, SIGNAL("itemChanged(QTreeWidgetItem *, int)"), self.onSeleccioVariable)
+        self.ui.arbreAnalitzadors.itemChanged.connect ( self.onSeleccioVariable ) 
+        #self.connect(self.ui.arbreAnalitzadors, SIGNAL("itemChanged(QTreeWidgetItem *, int)"), self.onSeleccioVariable)
         
         self.ui.actionIniciar.setEnabled(0)
         self.ui.actionAturar.setEnabled(0)
@@ -65,9 +64,9 @@ class Visor(QtGui.QMainWindow):
         self.loadConfig()
 
     def loadConfig(self):
-        self.ipServer = str(self.dConfig.settings.value("ipServidor").toString())
-        self.portServer = int(self.dConfig.settings.value("portServidor").toString())
-        self.dirExport = str(self.dConfig.settings.value("dirExport").toString())
+        self.ipServer = str(self.dConfig.settings.value("ipServidor")) #.toString())
+        self.portServer = int(self.dConfig.settings.value("portServidor")) #.toString())
+        self.dirExport = str(self.dConfig.settings.value("dirExport")) #.toString())
          
     def defColsHist(self):
         varsAnalitza = self.cliThr.values[1]["vars"]
@@ -85,7 +84,10 @@ class Visor(QtGui.QMainWindow):
         self.lineTable=0
 
     def avis(self, msg):
-        QtGui.QMessageBox.critical(self,self.tr("Error"), unicode(msg))
+        QtWidgets.QMessageBox.critical(self,self.tr("Error"), unicode(msg))
+
+    def changeStatusBar(self, msg):
+        self.ui.statusbar.showMessage(msg)
 
     def pintaEstat(self, idEquip):
         status = self.cliThr.values[idEquip]["estatLector"]
@@ -98,7 +100,7 @@ class Visor(QtGui.QMainWindow):
         elif status == STA_STARTED:
            self.ui.actionIniciar.setEnabled(0)
            self.ui.actionAturar.setEnabled(1)
-           self.ui.statusbar.showMessage("Servidor de lectures actiu i capturant dades ... (%s)" %  self.cliThr.values[idEquip]["lastRead"])
+           self.ui.statusbar.showMessage ("Servidor de lectures actiu i capturant dades ... (%s)" %  self.cliThr.values[idEquip]["lastRead"])
         elif status == STA_STOPPED:
            self.ui.actionIniciar.setEnabled(1)
            self.ui.actionAturar.setEnabled(0)
@@ -154,10 +156,10 @@ class Visor(QtGui.QMainWindow):
 
         if self.dConfig.exec_():
            self.dConfig.guardar()
-           self.ipServidor = str(self.dConfig.settings.value("ipServidor").toString())
+           self.ipServidor = str(self.dConfig.settings.value("ipServidor")) #.toString())
     
     def onCmdAbout(self):
-        QtGui.QMessageBox.about(self,self.tr("Sobre el programa"), u"Visor 2.0\n\nClient per poder monitoritzar el servidor de lectures.\nTomeu Capó i Capó 2012 (C)")
+        QtWidgets.QMessageBox.about(self,self.tr("Sobre el programa"), u"Visor 2.0\n\nClient per poder monitoritzar el servidor de lectures.\nTomeu Capó i Capó 2012 (C)")
 
     def onCmdExportarGrafiques(self):
         """
@@ -173,21 +175,24 @@ class Visor(QtGui.QMainWindow):
         try:
           self.loadConfig()
           self.cliThr = clientThread(self.ui, (self.ipServer,self.portServer))
-          self.connect(self.cliThr, SIGNAL("pintaVars(int)"), self.pintaVars)
-          self.connect(self.cliThr, SIGNAL("pintaEstat(int)"), self.pintaEstat) 
-          #self.connect(self.cliThr, SIGNAL("defColsHist()"), self.defColsHist)
+
+          self.cliThr.pintaEstat.connect( self.pintaEstat )
+          self.cliThr.pintaVars.connect( self.pintaVars ) 
+          self.cliThr.avis.connect( self.avis ) 
+          self.cliThr.showMsgStatus.connect( self.changeStatusBar ) 
+
           if not self.cliThr.connectar():
-             QtGui.QMessageBox.warning(self, self.tr("Error clientThread"), u"No puc identificar els analitzadors")
+             QtWidgets.QMessageBox.warning(self, self.tr("Error clientThread"), u"No puc identificar els analitzadors")
              return
         except Exception, err:
-          QtGui.QMessageBox.critical(self,self.tr("Error al connectar"), str(err))
+          QtWidgets.QMessageBox.critical(self,self.tr("Error al connectar"), str(err))
           return
 
         self.ui.actionConnectar.setEnabled(0)
         self.ui.actionDesconnectar.setEnabled(1)
         self.dConfig.cliThr = self.cliThr
 
-        arrel = QtGui.QTreeWidgetItem(["%s:%d" % (self.ipServer, self.portServer), ""])
+        arrel = QtWidgets.QTreeWidgetItem(["%s:%d" % (self.ipServer, self.portServer), ""])
         self.analitzador = {}
         for id, confs in self.cliThr.values.iteritems():
             descs = confs["defs"]    
@@ -195,10 +200,10 @@ class Visor(QtGui.QMainWindow):
             equip = self.cliThr.conf["equips"][id]
             items = []
             
-            self.analitzador[id] = QtGui.QTreeWidgetItem(arrel, [idEquip, ""])
+            self.analitzador[id] = QtWidgets.QTreeWidgetItem(arrel, [idEquip, ""])
             
             for p in equip["requests"]:
-                item = QtGui.QTreeWidgetItem(self.analitzador[id], [p, (descs[p]["descripcio"] if p in descs.keys() else "")])
+                item = QtWidgets.QTreeWidgetItem(self.analitzador[id], [p, (descs[p]["descripcio"] if p in descs.keys() else "")])
                 item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsUserCheckable) 
                 item.setCheckState(2, Qt.Unchecked) 
 
@@ -224,7 +229,7 @@ class Visor(QtGui.QMainWindow):
     def onCmdIniciar(self):
         self.ui.actionIniciar.setEnabled(0)        
         self.cliThr.iniciar()
-           
+
     def onSeleccioVariable(self, widgetItem, colum):
         if len(self.cliThr.values)<1:
            return
@@ -235,12 +240,14 @@ class Visor(QtGui.QMainWindow):
         if colum != 2:
            return
         
+        equip = widgetItem.parent().text(0) 
+        addrEquip = int(equip.split(":")[0])
+
         if widgetItem.checkState(colum) == Qt.Checked:
-           equip = widgetItem.parent().text(0) 
-           addrEquip = int(equip.split(":")[0])
            finVisor = finestraVisor("%d : %s" % (addrEquip, descVar), self.cliThr.values[addrEquip]['vars'][nomVar])
            finVisor.setAttribute(Qt.WA_DeleteOnClose | Qt.WA_LayoutOnEntireRect)
            finVisor.setWindowFlags(Qt.SubWindow)
+
            self.ui.zonaDisplays.addSubWindow(finVisor)
            finVisor.show()
            if not self.visors.get(addrEquip):
@@ -274,7 +281,7 @@ class Visor(QtGui.QMainWindow):
 
 
 if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     v = Visor()
     v.show()
     sys.exit(app.exec_())

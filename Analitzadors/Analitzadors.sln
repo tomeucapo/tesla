@@ -1,11 +1,13 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{20E19E72-73D2-4955-9740-EC2E6651E522}"
+EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "servidor", "servidor\servidor.pyproj", "{482A6BBE-6F30-4B76-B5BA-9F58A463C9AB}"
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "clients", "clients\clients.pyproj", "{274549B2-21AD-44C3-AFD8-3E121A328CC2}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{20E19E72-73D2-4955-9740-EC2E6651E522}"
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "frontalweb", "frontalweb\frontalweb.pyproj", "{A6189E61-1D9F-4EF2-89C9-15B44A48ECC4}"
 EndProject
