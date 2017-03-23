@@ -11,7 +11,7 @@ to implement integrations with web services that use rise from websites, mobile 
 being flexible also be integrated with other hardware solutions for the electric measurements, and thus provide a comprehensive 
 and open solution. 
 
-## Data adquisition device drivers supported
+## Supported data adquisition device drivers 
 
 * Circutor CVMk
 * Schneider-Electric PM-710, 500
