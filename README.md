@@ -16,3 +16,62 @@ and open solution.
 * Circutor CVMk
 * Schneider-Electric PM-710, 500
 * Desin DAS-8000
+
+## Server
+
+### Usage
+
+For start the server process for adquisition data you need create an configure device configuration file (config.xml), at the same directory of the server, like this:
+```xml
+<?xml version='1.0' encoding='UTF-8'?>                                                                      
+<configuracio>                                                                                              
+  <node id="4" name="CIFP Joan Taix" location="Sa Pobla (Son Basca)" />                                     
+  <devices>                                                                                                 
+      <device id="1" type="serial" enabled="true">                                                          
+         <port>COM1:</port>                                                                                 
+         <baud>19200</baud>                                                                                 
+         <bits>8</bits>                                                                                     
+         <timeout>1</timeout>                                                                               
+         <parity>N</parity>                                                                                 
+      </device>                                                                                             
+      <device id="2" type="serial" enabled="true">                                                          
+         <port>COM4:</port>                                                                                 
+         <baud>38400</baud>                                                                                 
+         <bits>8</bits>                                                                                     
+         <timeout>4</timeout>                                                                               
+         <parity>N</parity>                                                                                 
+      </device>                                                                                             
+  </devices>                                                                                                
+  <equips>                                                                                                  
+    <analitzador id="1" device="1" model="PM710" driver="modBusComm" dataDriver="pmData">                   
+        <params>                                                                                            
+                <fabricant>Schneider</fabricant>                                                            
+                <model>PM710</model>                                                                        
+                <tempsgravacio>15</tempsgravacio>                                                           
+                <tempslectura>60</tempslectura>                                                             
+        </params>                                                                                           
+                                                                                                            
+        <dataexports>                                                                                       
+            <dataexport type="localFile" target="dades" />                                                  
+            <!-- <dataexport type="clientRest" target="http://tesla.botilla.net/central/ws" /> -->          
+        </dataexports>                                                                                      
+                                                                                                            
+        <peticions>                                                                                         
+         <consulta>TPF</consulta>                                                                           
+         <consulta>IPF</consulta>                                                                           
+         <consulta>FRE</consulta>                                                                           
+         <consulta>PAF</consulta>                                                                           
+         <consulta>PAT</consulta>                                                                           
+         <consulta>PRT</consulta>                                                                           
+         <consulta>FPT</consulta>                                                                           
+         <consulta>THDV</consulta>                                                                          
+         <consulta>CEA</consulta>                                                                           
+         <consulta>CER</consulta>                                                                           
+        </peticions>                                                                                        
+   </analitzador>     
+   </equips>
+```
+
+## Client
+
+### Usage
