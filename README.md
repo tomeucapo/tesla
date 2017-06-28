@@ -95,4 +95,12 @@ For install server as windows service you need use lectorSvc.py, this uses a Win
 
 ### Command line client
 
+Simple command line shell for sends commands to server.
+
+### GUI Client
+
+Based on PyQt library, and can connect to a server and reads al measurements of all power analizers in realtime. Can control aquisition server: Pause and resume remotely.
+
 ### API Client library
+
+This a simple python library for connect to server and control this.
