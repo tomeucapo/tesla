@@ -21,6 +21,17 @@ and open solution.
 
 ### Usage
 
+#### Base configuration
+The server needs a basic configuration file called lector.ini, same as:
+```ini
+[General]
+log_level=debug
+auto_start=yes
+log_dir=log
+```
+This configuration determines is lectorSrv autostart or not, and configure main log level and/or log dir.
+
+#### Server configuration file
 For start the server process for adquisition data you need create an configure device configuration file (config.xml), at the same directory of the server, like this:
 ```xml
 <?xml version='1.0' encoding='UTF-8'?>                                                                      
@@ -72,6 +83,16 @@ For start the server process for adquisition data you need create an configure d
    </equips>
 ```
 
+#### Command line server
+
+Can start may server process with lector.py main program, this type of start working in foreground mode and waiting a Ctrl+C signal for interrupt all processes, used on development environments.
+
+#### Windows Service
+
+For install server as windows service you need use lectorSvc.py, this uses a Win32 API for install, start, stop and uninstall process. Needs copy lector.ini initial configuration file to Windows directory.
+
 ## Client
 
-### Usage
+### Command line client
+
+### API Client library
