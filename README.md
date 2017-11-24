@@ -104,3 +104,16 @@ Based on PyQt library, and can connect to a server and reads al measurements of 
 ### API Client library
 
 This a simple python library for connect to server and control this.
+
+## Web application and webservice
+
+This part of project contains a Django application that manage central database for collect all data from different Lector Servers and have an REST webservice implemented with Django-Tastypie.
+
+### API REST
+
+This API allows the servers to send the readings to the central server for later analysis. This API have two differnet calls:
+
+* GET /ws/v2/history/load
+* POST /ws/v2/history/save
+
+The lector server uses POST save method for send all measurements to this service.
