@@ -103,7 +103,10 @@ Based on PyQt library, and can connect to a server and reads al measurements of 
 
 ### API Client library
 
-This a simple python library for connect to server and control this.
+This a simple python library for connect to server and control.
+
+* comm: Defines primitive methods with TCP socket client.
+* client: Defines different method server calls.  
 
 ## Web application and webservice
 
